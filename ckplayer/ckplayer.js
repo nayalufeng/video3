@@ -1449,7 +1449,7 @@
 				escFull:null,
 				definition:null,
 				playbackrate:null,
-				subtitles:null,
+				subtitles:null
 			};
 			for(k in divEle){
 				this.CB[k]=divEle[k];
@@ -1473,7 +1473,7 @@
 			this.CB['timeText'].innerHTML=timeInto;//初始化时间
 			divEle={
 				loadProgress:null,
-				timeProgress:null,
+				timeProgress:null
 			};
 			for(k in divEle){
 				this.CB[k]=divEle[k];
@@ -1484,7 +1484,7 @@
 			this.CB['timeBoBg'].appendChild(this.CB['timeButton']);
 			divEle={
 				volumeBg:null,
-				volumeBO:null,
+				volumeBO:null
 			};
 			for(k in divEle){
 				this.CB[k]=divEle[k];
@@ -4105,7 +4105,7 @@
 			}
 			this.css(this.CB['volumeBg'],cssTemp);
 			this.css(this.CB['volumeBg'], {
-				position: 'absolute',
+				position: 'absolute'
 			});
 			cssTemp['width']=(this.CB['volumeBO'].offsetWidth*0.5+parseInt(this.css(this.CB['volumeBO'],'left')))+'px';
 			this.css(this.CB['volumeUp'],cssTemp);
