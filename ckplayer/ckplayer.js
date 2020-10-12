@@ -361,7 +361,6 @@
 				}
 			}
 			this.videoString=videoStringTemp;
-			
 			this.checkUpConfig();	
 		},
 		/*
@@ -8156,7 +8155,7 @@
 			}
 			var minuteS=Math.floor(t/60);//将秒数直接转化成分钟取整，这个可以得到如80分钟
 			var minute=minuteS;//获取准确的分钟
-			var hourS=Math.floor(t/360);//将秒数直接转化成小时取整，这个可以得到100小时
+			var hourS=Math.floor(t/3600);//将秒数直接转化成小时取整，这个可以得到100小时
 			var second=t %60;
 			if(minuteS>=60){
 				minute=Math.floor(minuteS%60);
@@ -8164,7 +8163,7 @@
 			//总时间
 			var hminuteS=Math.floor(dt/60);//将秒数直接转化成分钟取整，这个可以得到如80分钟
 			var hminute=hminuteS;//获取准确的分钟
-			var hhourS=Math.floor(dt/360);//将秒数直接转化成小时取整，这个可以得到100小时
+			var hhourS=Math.floor(dt/3600);//将秒数直接转化成小时取整，这个可以得到100小时
 			var hsecond=dt %60;
 			if(hminuteS>=60){
 				hminute=Math.floor(hminuteS%60);
