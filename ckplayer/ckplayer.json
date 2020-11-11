@@ -23,7 +23,7 @@
 		},
 		"timeJump": 10,
 		"volumeJump": 0.1,
-		"timeScheduleAdjust": "1",
+		"timeScheduleAdjust": 1,
 		"previewDefaultLoad": true,
 		"promptSpotTime": true,
 		"buttonMode": {
