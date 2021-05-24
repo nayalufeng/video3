@@ -945,10 +945,10 @@
 				} else {
 					var html = '';
 					if (!this.isM3u8) {
-						html = '<video id="' + vid + '"' + src + ' width="100%" height="100%"' + autoplay + poster + loop + preload + controls + mobileautofull + track + crossorigin+'>' + source + '</video>';
+						html = '<video id="' + vid + '"' + src + ' controlslist="nodownload" width="100%" height="100%"' + autoplay + poster + loop + preload + controls + mobileautofull + track + crossorigin+'>' + source + '</video>';
 
 					} else {
-						html = '<video id="' + vid + '" width="100%" height="100%"' + poster + loop + preload + controls + mobileautofull + track + crossorigin+'></video>';
+						html = '<video id="' + vid + '" controlslist="nodownload" width="100%" height="100%"' + poster + loop + preload + controls + mobileautofull + track + crossorigin+'></video>';
 					}
 					this.PD.innerHTML = html;
 					this.V = this.getByElement('#' + vid); //V：定义播放器对象全局变量
