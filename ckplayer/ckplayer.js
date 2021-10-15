@@ -15,18 +15,6 @@
 */
 
 !(function() {
-	var ckplayerPath = '';
-	!function() {
-		var scriptList = document.scripts,
-		thisPath = scriptList[scriptList.length - 1].src;
-		for(var i=0;i<scriptList.length;i++){
-			var scriptName=scriptList[i].getAttribute('name') || scriptList[i].getAttribute('data-name');
-			if(scriptName && scriptName=='ckplayer'){
-				thisPath = scriptList[i].src;
-			}
-		}
-		ckplayerPath = thisPath.substring(0, thisPath.lastIndexOf('/') + 1);
-	} ();
 	var ckplayer = function(obj) {
 		/*
 			javascript部分开发所用的注释说明：
@@ -315,6 +303,8 @@
 		this.cdWH={w:0,h:0};
 		//全局变量，保存所有的元素变量
 		this.CB={};
+		//全局变量，调用当前路径
+		this.ckplayerPath=this.getPath();
 		if (obj) {
 			this.embed(obj);
 		}
@@ -380,12 +370,12 @@
 						this.loadConfig(null);
 					}
 					else{
-						this.loadConfig(ckplayerPath+this.vars['config']);
+						this.loadConfig(this.ckplayerPath+this.vars['config']);
 					}
 					
 				}
 				else{
-					this.loadConfig(ckplayerPath+this.vars['config'].substr(8));
+					this.loadConfig(this.ckplayerPath+this.vars['config'].substr(8));
 				}
 			}
 			else {
@@ -405,11 +395,11 @@
 			          		this.loadConfig(null);
 			          	}
 						else{
-							this.loadConfig(ckplayerPath+'ckplayer.json');
+							this.loadConfig(this.ckplayerPath+'ckplayer.json');
 						}
 			        }
 			        else {
-			           this.loadConfig(ckplayerPath+'ckplayer.json');
+			           this.loadConfig(this.ckplayerPath+'ckplayer.json');
 			        }
 			    } catch(e) {
 			    	thisTemp.sysError(thisTemp.errorList[12],e);//系统错误
@@ -469,12 +459,12 @@
 						this.loadLanguage(null);
 					}
 					else{
-						this.loadLanguage(ckplayerPath+languagePath);
+						this.loadLanguage(this.ckplayerPath+languagePath);
 					}
 					
 				}
 				else{
-					this.loadLanguage(ckplayerPath+languagePath.substr(8));
+					this.loadLanguage(this.ckplayerPath+languagePath.substr(8));
 				}
 				
 			}
@@ -495,11 +485,11 @@
 			          		this.loadLanguage(null);
 			          	}
 						else{
-							 this.loadLanguage(ckplayerPath+'language.json');
+							 this.loadLanguage(this.ckplayerPath+'language.json');
 						}
 			        }
 			        else {
-			           this.loadLanguage(ckplayerPath+'language.json');
+			           this.loadLanguage(this.ckplayerPath+'language.json');
 			        }
 			    } catch(e) {
 			    	thisTemp.sysError(thisTemp.errorList[12],e);//系统错误
@@ -559,11 +549,11 @@
 						this.loadStyle(null);
 			        }
 					else{
-						this.loadStyle(ckplayerPath+stylePath);
+						this.loadStyle(this.ckplayerPath+stylePath);
 					}
 				}
 				else{
-					this.loadStyle(ckplayerPath+stylePath.substr(8));
+					this.loadStyle(this.ckplayerPath+stylePath.substr(8));
 				}
 				
 			}
@@ -586,11 +576,11 @@
 							this.loadStyle(null);
 			          	}
 						else{
-							this.loadStyle(ckplayerPath+'style.json');
+							this.loadStyle(this.ckplayerPath+'style.json');
 						}
 				    }
 			        else {
-			           this.loadStyle(ckplayerPath+'style.json');
+			           this.loadStyle(this.ckplayerPath+'style.json');
 			        }
 			    } catch(e) {}
 				
@@ -971,7 +961,7 @@
 					var loadJsHandler = function() {
 						thisTemp.embedHls(thisTemp.VA[0][0], v['autoplay']);
 					};
-					this.loadJs(ckplayerPath + 'hls/hls.min.js', loadJsHandler);
+					this.loadJs(this.ckplayerPath + 'hls/hls.min.js', loadJsHandler);
 				}
 				this.css(this.V, 'backgroundColor', vBg);
 				//创建一个画布容器
@@ -1387,8 +1377,6 @@
 			var styleAS=thisStyle['advertisement'];
 			var styleDF=styleC['definition'];
 			var bWidth = 38;//按钮的宽
-			
-			//var timeInto = this.formatTime(0) + ' / ' + this.formatTime(this.vars['duration']); //时间显示框默认显示内容
 			var timeInto = this.formatTime(0,this.vars['duration'],this.ckLanguage['vod']); //时间显示框默认显示内容			
 			/*
 				构建一些PD（播放器容器）里使用的元素
@@ -6467,7 +6455,7 @@
 			var param = this.getFlashplayerParam();
 			var flashplayerUrl = 'http://www.macromedia.com/go/getflashplayer';
 			var html = '',
-			src = ckplayerPath + 'ckplayer.swf';
+			src = this.ckplayerPath + 'ckplayer.swf';
 			id = 'id="' + vid + '" name="' + vid + '" ';
 			html += '<object pluginspage="' + flashplayerUrl + '" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"  codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=11,3,0,0" width="100%" height="100%" ' + id + ' align="middle" wmode="transparent">';
 			html += param['v'];
@@ -8997,6 +8985,22 @@
 					return typeof(val);
 					break;
 			}
+		},
+		/*
+			获取此js文件所在路径
+		*/
+		getPath:function(){
+			var scriptList = document.scripts,
+			thisPath = scriptList[scriptList.length - 1].src;
+			for(var i=0;i<scriptList.length;i++){
+				var scriptName=scriptList[i].getAttribute('name') || scriptList[i].getAttribute('data-name');
+				var src=scriptList[i].src.slice(scriptList[i].src.lastIndexOf('/') + 1,scriptList[i].src.lastIndexOf('.'));
+				if((scriptName && (scriptName=='ckplayer' || scriptName=='ckplayer.min')) || (scriptList[i].src && (src=='ckplayer' || src=='ckplayer.min'))){
+					thisPath = scriptList[i].src;
+					break;
+				}
+			}
+			return thisPath.substring(0, thisPath.lastIndexOf('/') + 1);
 		},
 		getConfigObject:function(){
 			return this.jsonConfig;
