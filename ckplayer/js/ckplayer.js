@@ -1408,8 +1408,6 @@
 		},
 		suspend:function(){
 			eventTarget('suspend');//注册监听error
-			CT.error={code:14,message:'load:suspend'};
-			eventTarget('error',CT.error);//注册监听error
 		},
 		emptied:function(){
 			eventTarget('emptied');//注册监听error
@@ -6163,10 +6161,16 @@
 			requestAnimationFrame(step);
 		};
 		var	appendFps = function(fps) {
-			CT.fps=fps;
-			replaceInformation('fps',fps);
-			eventTarget('fps',fps);
+			if(fps!=CT.fps){
+				CT.fps=fps;
+				replaceInformation('fps',fps);
+				eventTarget('fps',fps);
+			}
+			
 		};
+		if(isUndefined(CT.fps)){
+			CT.fps=0;
+		}
 		step();
 	}
 	/*
