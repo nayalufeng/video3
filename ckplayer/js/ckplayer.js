@@ -2842,7 +2842,7 @@
 						screenshotImg=createlImg(base64);
 						screenshotImg.addListener('load',function(){
 							C['screenshot']['img'].append(screenshotImg);
-							C['screenshot'].css({'width':this.getWidth()+'px'});
+							C['screenshot'].show().css({'width':this.getWidth()+'px'});
 						});
 						var newBlob=dataURLtoBlob(base64);
 						var url = URL.createObjectURL(newBlob);
