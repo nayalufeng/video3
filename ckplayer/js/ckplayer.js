@@ -404,16 +404,31 @@
 			video.attr('x5-playsinline','true');
 		}
 		catch(event){}
+		/*
+		 * 默认设置支持小窗口模式
+		 */
 		CT.smallWindows=true;
+		/*
+		 * 默认设置不显示页面全屏按钮
+		 */
 		CT.webFull=false;
+		/*
+		 * 默认设置不显示剧场模式按钮
+		 */
 		CT.theatre=false;
-		loadFace();//加载播放器界面节点
+		loadFace();//加载播放器界面
+		/*
+		 * 判断是否支持video标签
+		 */
 		if(isUndefined(video.canPlayType)){
 			CT.error={code:5,message:language['error']['supportVideoError']};
 			showError();
 			return player;
 		}
-		addAllListener();//注册内部监听，监听到事件后注册给CT使用
+		/*
+		 * 注册视频播放器内部监听，监听到事件后注册给CT使用
+		 */
+		addAllListener();
 		if(!isUndefined(vars['loaded'])){
 			if(valType(vars['loaded'])=='function'){
 				try{
