@@ -776,7 +776,7 @@
 		C['bar']['playAndPause']['pause'].click(player.pause);
 		C['bar']['playAndPause']['pause'].mouseover(function(){tip(this,language['pause']);});
 		C['bar']['playAndPause'].append(C['bar']['playAndPause']['pause']);
-		
+		C['bar']['playAndPause']['pause'].hide();
 		C['bar']['playAndPause']['refresh']=createlButton('ck-bar-btn ck-btn-refresh');
 		C['bar']['playAndPause']['refresh'].click(player.play);
 		C['bar']['playAndPause']['refresh'].mouseover(function(){tip(this,language['refresh']);});
@@ -836,7 +836,9 @@
 		C['bar']['webFullAndExit']['exitWebFull'].click(player.exitWebFull);
 		C['bar']['webFullAndExit']['exitWebFull'].mouseover(function(){tip(this,language['exitWebFull']);});
 		C['bar']['webFullAndExit'].append(C['bar']['webFullAndExit']['exitWebFull']);
-		
+		if(!vars['webFull']){
+			C['bar']['webFullAndExit'].hide();
+		}
 		//剧场模式按钮组
 		C['bar']['theatreAndExit']=createlDiv('ck-bar-theatreandexit');
 		C['bar'].append(C['bar']['theatreAndExit']);
@@ -850,7 +852,10 @@
 		C['bar']['theatreAndExit']['exitTheatre'].click(player.exitTheatre);
 		C['bar']['theatreAndExit']['exitTheatre'].mouseover(function(){tip(this,language['exitTheatre']);});
 		C['bar']['theatreAndExit'].append(C['bar']['theatreAndExit']['exitTheatre']);
-				
+		
+		if(!vars['theatre']){
+			C['bar']['theatreAndExit'].hide();
+		}
 		//音量容器
 		C['bar']['vbox']=createlDiv('ck-bar-volumebox');
 		C['bar'].append(C['bar']['vbox']);
@@ -1380,7 +1385,6 @@
 				var code=12;
 				var msg=language['error']['loadingFailed'];
 				if(event.type=='error'){
-					log(event);
 					if(!isUndefined(this.error)){
 						if(!isUndefined(this.error.code)){
 							code=this.error.code;
