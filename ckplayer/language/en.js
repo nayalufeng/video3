@@ -55,7 +55,7 @@
 			prohibitBackOff:'No repeat viewing',
 			prohibitForward:'Fast forward prohibited',
 			prohibitLookBack:'Some content is forbidden to play',
-			prohibitForward:'Disable playback of parts not viewed'
+			prohibitForwardNotViewed:'Disable playback of parts not viewed'
 		},
 		error:{
 			noMessage:'Unknown error',

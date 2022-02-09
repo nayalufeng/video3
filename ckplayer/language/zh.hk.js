@@ -55,7 +55,7 @@
 			prohibitBackOff: '視頻禁止重複觀看',
 			prohibitForward: '視頻禁止快進',
 			prohibitLookBack: '視頻禁止播放部分內容',
-			prohibitForward: '視頻禁止播放未觀看的部分'
+			prohibitForwardNotViewed: '視頻禁止播放未觀看的部分'
 		},
 		error: {
 			noMessage: '未知錯誤',
