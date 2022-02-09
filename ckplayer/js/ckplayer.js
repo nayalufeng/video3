@@ -402,6 +402,8 @@
 			video.attr('playsinline','true');
 			video.attr('webkit-playsinline','true');
 			video.attr('x5-playsinline','true');
+			video.useCORS=true;//解决跨域
+	     	video.crossOrigin='Anonymous';//解决跨域
 		}
 		catch(event){}
 		/*
