@@ -904,6 +904,11 @@
 	white-space:nowrap;
 	font-size: 16px;
 	color: #FFF;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 .ckplayer-ckplayer .ck-main.ck-main-full .ck-bar .ck-bar-playbackrate-box .ck-bar-playbackrate{
 	font-size: 18px;
@@ -936,6 +941,11 @@
 	white-space:nowrap;
 	font-size: 16px;
 	color: #FFF;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 .ckplayer-ckplayer .ck-main.ck-main-full .ck-bar .ck-bar-track-box .ck-bar-track{
 	font-size: 18px;
@@ -968,6 +978,11 @@
 	white-space:nowrap;
 	font-size: 16px;
 	color: #FFF;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 .ckplayer-ckplayer .ck-main.ck-main-full .ck-bar .ck-bar-definition-box .ck-bar-definition{
 	font-size: 18px;
@@ -1195,6 +1210,11 @@
 	font-size: 1rem;
 	float: left;
 	overflow: hidden;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 /*共用状态-音量调节背景色*/
 .ckplayer-ckplayer .ck-main .ck-bar .ck-bar-volumebox .ck-bar-volume .ck-bar-volume-bg{
@@ -1237,6 +1257,11 @@
 	line-height: 48px;
 	font-size: 16px;
 	color: #FFF;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 /*全屏状态-显示时间*/
 .ckplayer-ckplayer .ck-main.ck-main-full .ck-bar .ck-bar-time{
@@ -1420,6 +1445,11 @@
 	text-align: center;
 	font-size: 18px;
 	color: #FFF;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 .ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-time{
 	float: right;
@@ -1428,6 +1458,11 @@
 	font-size: 14px;
 	color: #FFF;
 	padding: 0 1rem 0;
+	-moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
 }
 /*以下为缓动效果样式*/
 .ck-animate {
