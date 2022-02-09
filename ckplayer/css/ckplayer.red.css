@@ -323,7 +323,7 @@
 	padding-right: .5rem;
 }
 .ckplayer-ckplayer .ck-main .ck-about ul li .ck-about-content{
-	width: 100px;
+	width: auto;
 	float: left;
 }
 .ckplayer-ckplayer .ck-main .ck-about .ck-about-bar{
