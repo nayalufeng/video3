@@ -4476,7 +4476,6 @@
 			clearTime();
 			moveTimer=setTimeout(function(){
 				showPreview(-1);
-				tip();
 			},30);
 		};
 		bg.mousedown(bgMouseDown);
