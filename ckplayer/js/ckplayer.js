@@ -4252,6 +4252,7 @@
 		var doc=$(document);
 		var sliderDownTime=0;
 		var sliderMouseDown = function(e) {
+			e.preventDefault && e.preventDefault();
 			if(!vars['timeScheduleAdjust']){//禁止拖动
 				return;
 			}
@@ -4360,6 +4361,7 @@
 				eventTarget('seek',{time:playbackTime,state:'seeking',date:date('Y-m-d H:i:s',playbackTime)});
 			}
 			C['bar']['pbox'].removeClass('ck-bar-progress-slider-move');
+			tip();
 		};
 				
 		var sliderMouseOver=function(){
@@ -4477,6 +4479,7 @@
 		var pos = 0,
 			posRecord = 0;
 		var sliderMouseDown = function(e) {
+			e.preventDefault && e.preventDefault();
 			noScrolling(true);
 			e = e || window.event;
 			var client = getClient(e);
