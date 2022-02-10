@@ -4168,7 +4168,7 @@
 				C['tip']['triangle'].removeClass('ck-triangle-left').addClass('ck-triangle-auto');
 			}
 			tipResize(ele,cl,align);
-			if(isUndefined(CT.tipSetTimeOut)){
+			if(isUndefined(CT.closeTipSetTimeOut)){
 				CT.closeTipSetTimeOut=function(){
 					if(tipSetTime){
 						clearTimeout(tipSetTime);
@@ -4176,6 +4176,7 @@
 					}
 				};
 			}
+			CT.closeTipSetTimeOut();
 			var mouseOut=function(){
 				CT.closeTipSetTimeOut();
 				tipSetTime=setTimeout(function(){
