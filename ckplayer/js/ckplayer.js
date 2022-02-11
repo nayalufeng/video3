@@ -191,7 +191,7 @@
 		 */
 		language=decodeURIString(language);
 		if(!isUndefined(window.ckplayerLanguage)){
-			language=window.ckplayerLanguage;
+			language=mergeObj(language,window.ckplayerLanguage);
 		}
 		/*
 		 * 初始化注册事件函数，该函数的作用是将所有相关的事件都注册进一个变量newEvent
@@ -313,7 +313,7 @@
 			var path=getPath('language')+vars['language']+'.js';
 			loadJs(path,function(){
 				if(!isUndefined(window['ckplayerLanguage'])){
-					language=window['ckplayerLanguage'];
+					language=mergeObj(language,window['ckplayerLanguage']);
 				}
 				return embed(obj);
 			});
@@ -4175,20 +4175,19 @@
 						tipSetTime=null;
 					}
 				};
+				CT.closeTipMouseOut=function(ele){
+					CT.closeTipSetTimeOut();
+					tipSetTime=setTimeout(function(){
+						tip();
+						tipSetTime=null;
+					},100);
+					if(ele){
+						ele.removeListener('mouseout',CT.closeTipMouseOut);
+					}
+				};
 			}
 			CT.closeTipSetTimeOut();
-			var mouseOut=function(){
-				CT.closeTipSetTimeOut();
-				tipSetTime=setTimeout(function(){
-					C['tip'].hide();
-					C['tip'].removeClass('ck-animate');
-					C['tip'].removeClass('ck-animate-bouncein');
-					tipSetTime=null;
-				},100);
-				ele.removeListener('mouseout',mouseOut);
-			};
-			ele.removeListener('mouseout',mouseOut);
-			ele.mouseout(mouseOut);
+			ele.mouseout(function(){CT.closeTipMouseOut(ele)});
 		}
 		else{
 			C['tip'].hide();
@@ -4364,9 +4363,11 @@
 				eventTarget('seek',{time:playbackTime,state:'seeking',date:date('Y-m-d H:i:s',playbackTime)});
 			}
 			C['bar']['pbox'].removeClass('ck-bar-progress-slider-move');
-			tip();
+			if(isMouseLeave){
+				tip();
+			}
 		};
-				
+		var isMouseLeave=true;//默认鼠标离开了进度按钮上
 		var sliderMouseOver=function(){
 			var time='';
 			if(!vars['live']){
@@ -4375,10 +4376,16 @@
 			else{
 				time=language['live'];
 			}
+			isMouseLeave=false;
 			tip(slider,time);
+		};
+		
+		var sliderMouseLeave=function(){
+			isMouseLeave=true;
 		};
 		slider.mousedown(sliderMouseDown);
 		slider.mouseover(sliderMouseOver);
+		slider.mouseleave(sliderMouseLeave);
 		slider.touchstart(sliderMouseDown);
 		var bgMouseDown=function(e){
 			e = e || window.event;
@@ -5191,6 +5198,15 @@
 					return this;
 				};
 				/*
+				 * mouseleave
+				 * 功能：鼠标指针移出节点时执行的函数
+				 * @fn：执行的函数
+				*/
+				res.mouseleave =function(fn){
+					addListener(this,'mouseleave',fn);
+					return this;
+				};
+				/*
 				 * touchstart
 				 * 功能：移动端鼠标在节点上按下时执行的函数
 				 * @fn：执行的函数
@@ -5787,6 +5803,35 @@
 		for (k in n) {
 			if(k in h){
 				h[k] = n[k];
+			}
+		}
+		return h;
+	}
+	/*
+	 * mergeObj
+	 * 功能：将新对象合并到原对象中，需要确保原对像里有对应的值并且类型一样
+	 * @o:原对象，@n：新对象
+	*/
+	function mergeObj(o,n){
+		var h = {};
+		var k;
+		for (k in o) {
+			h[k] = o[k];
+		}
+		for (k in n) {
+			if(k in h){
+				switch(valType(h[k])){
+					case 'object':
+						if(valType(n[k])=='object'){
+							h[k] = mergeObj(h[k],n[k]);
+						}
+						break;
+					default:
+						if(valType(h[k])==valType(n[k])){
+							h[k] = n[k];
+						}
+						break;
+				}
 			}
 		}
 		return h;
