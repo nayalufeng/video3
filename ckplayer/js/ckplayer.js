@@ -115,6 +115,7 @@
 		duration:0,//视频总时间
 		preview: null,//预览图片对象
 		prompt: null,//提示点功能
+		crossOrigin:'',//跨域请求字符
 		video: null,//视频地址
 		type:'',//视频类型
 		playbackrate: 1,//默认倍速
@@ -402,8 +403,10 @@
 			video.attr('playsinline','true');
 			video.attr('webkit-playsinline','true');
 			video.attr('x5-playsinline','true');
-			video.useCORS=true;//解决跨域
-	     	video.crossOrigin='Anonymous';//解决跨域
+			if(vars['crossOrigin']){
+				video.useCORS=true;//解决跨域
+	     		video.crossOrigin=vars['crossOrigin'];//解决跨域
+			}
 		}
 		catch(event){}
 		/*
