@@ -427,6 +427,7 @@
 		 */
 		if(isUndefined(video.canPlayType)){
 			CT.error={code:5,message:language['error']['supportVideoError']};
+			eventTarget('error',CT.error);//注册监听error
 			showError();
 			return player;
 		}
@@ -493,6 +494,7 @@
 					}
 					else{
 						CT.error={code:8,message:language['error']['ajax']};
+						eventTarget('error',CT.error);//注册监听error
 						showError();
 					}
 				}});
@@ -534,6 +536,7 @@
 			}
 			else{
 				CT.error={code:10,message:language['error']['emptied']};
+				eventTarget('error',CT.error);//注册监听error
 				showError();
 			}
 			loadTrack();
@@ -564,6 +567,7 @@
 				break;
 			default:
 				CT.error={code:10,message:language['error']['emptied']};
+				eventTarget('error',CT.error);//注册监听error
 				showError();
 				break;
 		}
@@ -580,8 +584,27 @@
 				hls.loadSource(url);
 				hls.attachMedia(video);
 				hls.on(Hls.Events.ERROR, function(event, data){
-					CT.error={code:9,message:language['error']['loadingFailed']};
-					showError();
+					var code=9;
+					var message=language['error']['loadingFailed'];
+					var fatal=data.fatal;
+					if(!isUndefined(data.response)){
+						if(!isUndefined(data.response.code)){
+							code=data.response.code;
+						}
+						if(!isUndefined(data.response.text) && data.response.text){
+							message=data.response.text;
+						}
+						else{
+							if(!isUndefined(event)){
+								message=event;
+							}
+						}
+					}
+					CT.error={code:code,message:message};
+					eventTarget('error',CT.error);//注册监听error
+					if(fatal){
+						showError();
+					}
 				});
 			}
 			else if(canPlay(url)){
@@ -622,6 +645,7 @@
 		        });
 		        pugPlayer.on(flvjs.Events.ERROR, function(errorType, errorDetail, errorInfo){
                   	CT.error={code:errorInfo['code'],message:errorInfo['msg']};
+                  	eventTarget('error',CT.error);//注册监听error
 					showError();
 		        });
 		    }
@@ -661,6 +685,7 @@
 		        });
 		        pugPlayer.on(mpegts.Events.ERROR, function(errorType, errorDetail, errorInfo){
                   	CT.error={code:errorInfo['code'],message:errorInfo['msg']};
+                  	eventTarget('error',CT.error);//注册监听error
 					showError();
 		        });
 		    }
@@ -745,6 +770,7 @@
 		}
 		if(!is && !vars['plug']){
 			CT.error={code:6,message:language['error']['videoTypeError']};
+			eventTarget('error',CT.error);//注册监听error
 			showError();
 		}
 		return is;
@@ -1384,6 +1410,9 @@
 			if(!isUndefined(ad) && !isUndefined(ad['frontPlay']) && ad['frontPlay'] && loadedmetadataNum>1){//如果是贴片广告播放中，则进行播放
 				calculationAdFrontTime(duration-playTime);//计算贴片广告的时间
 			}
+			if(!isUndefined(C['error']) && C['error'].css('display')=='block'){
+				C['error'].hide();
+			}
 			replaceInformation('audioDecodedByteCount',this.webkitAudioDecodedByteCount || this.audioDecodedByteCount || 0);
 			replaceInformation('videoDecodedByteCount',this.webkitVideoDecodedByteCount || this.videoDecodedByteCount || 0);
 		},
@@ -1860,6 +1889,7 @@
 					break;
 				default:
 					CT.error={code:10,message:language['error']['emptied']};
+					eventTarget('error',CT.error);//注册监听error
 					showError();
 					break;
 			}
