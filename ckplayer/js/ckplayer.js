@@ -2385,6 +2385,7 @@
 							}
 							break;
 					}
+					pSliderMouseDown=false;
 					video.currentTime=fn;
 				}
 			}
