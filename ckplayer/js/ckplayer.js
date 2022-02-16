@@ -174,6 +174,7 @@
 	var pugPlayer=null;//插件播放器
 	var hls=null;//播放hls
 	var loadMeta=true;//第一次加载到元数据
+	var app='';//平台类型
 	/*
 	 * into
 	 * 功能：初始化，调用播放器则首先调用该函数
@@ -199,6 +200,10 @@
 		 * newEvent是提供给播放器外部监听函数使用的，如监听时间player.time(function(t){console.log('已播放：'+t);});
 		 */
 		eventTarget();
+		/*
+		 * 判断平台类型
+		 */
+		app=getApp();
 		/*
 		 * 简单复制一下初始化时的默认配置
 		 */
@@ -517,8 +522,7 @@
 						plugPlayer(vstr[i][0]);
 					}
 					else{
-						var type='';
-						type=' type="'+ vstr[i][1]+'"';
+						var type=' type="'+ vstr[i][1]+'"';
 						if(vstr[i].length>1){
 							source += '<source src="' + decodeURIComponent(vstr[i][0]) + '"' +type + '>';
 						}
@@ -1145,6 +1149,9 @@
 			loadAbout();//构建关于视频相关内容
 			loadMenu();//构建右键
 		}
+		if(app=='iphone'){
+			C['loading'].hide();
+		}
 		changeTopTime();//修改顶部时间
 		CK.mouseout(function(){
 			if(!paused){
@@ -1291,16 +1298,35 @@
 		}
 	}
 	/*
+	 * loadedMetaData
+	 * 功能：视频播放对象video注册内部监听调用函数
+	*/
+	function loadedMetaData(){
+		eventTarget('loadedMetaData',{
+			width:CK.getWidth(),
+			height:CK.getHeight(),
+			videoWidth:CT.videoWidth,
+			videoHeight:CT.videoHeight,
+			duration:duration,
+			volume:CT.volume
+		});
+		replaceInformation('videoWidth',CT.videoWidth);
+		replaceInformation('videoHeight',CT.videoHeight);
+		replaceInformation('volume',parseInt(CT.volume*100));
+		replaceInformation('duration',parseInt(duration));
+	}
+	/*
 	 * videoHandler
 	 * 功能：视频播放对象video注册内部监听调用函数
 	*/
 	var videoHandler={
 		loadStart:function(){
-			if(!vars['controls']){
+			if(!vars['controls'] && app!='iphone'){
 				C['loading'].show();
 			}
 			C['centerPlay'].hide();
 			eventTarget('loadstart');
+			
 		},
 		canPlay:function(){
 			C['loading'].hide();
@@ -1310,9 +1336,6 @@
 			eventTarget('loadeddata');
 		},
 		loadedMetaData:function(){
-			if(!this.videoWidth || !this.videoHeight){
-				return;
-			}
 			duration=this.duration;
 			if(!isUndefined(this.duration) && vars['duration']){
 				duration=vars['duration'];
@@ -1327,23 +1350,16 @@
 			}
 			if(!vars['autoplay'] && !vars['controls']){
 				C['centerPlay'].show();
+				C['buffer'].hide();
 			}
-			eventTarget('loadedMetaData',{
-				width:CK.getWidth(),
-				height:CK.getHeight(),
-				videoWidth:this.videoWidth,
-				videoHeight:this.videoHeight,
-				duration:duration,
-				volume:this.volume
-			});
+			
 			CT.duration=duration;
 			CT.videoWidth=this.videoWidth;
 			CT.videoHeight=this.videoHeight;
 			CT.volume=this.volume;
-			replaceInformation('videoWidth',this.videoWidth);
-			replaceInformation('videoHeight',this.videoHeight);
-			replaceInformation('volume',parseInt(this.volume*100));
-			replaceInformation('duration',parseInt(duration));
+			if(CT.videoWidth || CT.videoHeight || duration){
+				loadedMetaData();
+			}
 			var len = 0;
 			if(!isUndefined(this.buffered)){
 				len=this.buffered.length;
@@ -1395,6 +1411,16 @@
 			var len = this.buffered.length;
 			if(len>0){
 				changeLoad();
+			}
+			if(!duration && this.duration){
+				consoleObj(this);
+				duration=this.duration;
+				CT.duration=duration;
+				CT.videoWidth=this.videoWidth;
+				CT.videoHeight=this.videoHeight;
+				if(CT.videoWidth || CT.videoHeight || duration){
+					loadedMetaData();
+				}
 			}
 			oldTime=playTime;
 			playTime=this.currentTime;
@@ -1598,12 +1624,14 @@
 				else{
 					if(!vars['controls']){
 						C['centerPlay'].show();
+						C['buffer'].hide();
 					}
 				}
 			}
 			else{
 				if(!vars['controls']){
 					C['centerPlay'].show();
+					C['buffer'].hide();
 				}
 			}
 			C['bar']['playAndPause']['pause'].hide();
@@ -2003,6 +2031,7 @@
 				ad['pauseClose']=createlButton('ck-pause-close');
 				ad['pauseClose'].click(function(){
 					C['centerPlay'].show();
+					C['buffer'].hide();
 					closePauseAd();
 				});
 			}
@@ -6625,6 +6654,12 @@
 	    else{ //开启滚动
 	        $('body').removeListener('touchmove',bodyScroll, {passive: false});
 	    }
+	}
+	function getApp(){
+		var u = navigator.userAgent.toLowerCase();
+		if(u.indexOf('iphone')>-1){
+			return 'iphone';
+		}
 	}
 	return into;
 }));
