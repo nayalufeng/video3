@@ -2154,6 +2154,21 @@
 						'width':fn+'%',
 						'height':fn+'%'
 					});
+					var arr=[C['topBar']['zoomEle']['zoom50'],C['topBar']['zoomEle']['zoom75'],C['topBar']['zoomEle']['zoom100']];
+					for(var i=0;i<arr.length;i++){
+						arr[i].removeClass('ck-top-bar-zoom-container-focus')
+					}
+					switch(fn){
+						case 50:
+							arr[0].addClass('ck-top-bar-zoom-container-focus');
+							break;
+						case 75:
+							arr[1].addClass('ck-top-bar-zoom-container-focus');
+							break;
+						case 100:
+							arr[2].addClass('ck-top-bar-zoom-container-focus');
+							break;
+					}
 					eventTarget('zoom',fn);
 				}
 			}
@@ -2647,6 +2662,7 @@
 	            	var fullScreen=video.webkitEnterFullscreen || video.webkitEnterFullScreen;
 	            	fullScreen.call(video);
 	            }
+	            player.zoom(100);
 			}
 			return this;
 		},

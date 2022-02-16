@@ -1411,10 +1411,12 @@
 	-moz-box-sizing:content-box; /* Firefox */
 	-webkit-box-sizing:content-box; /* Safari */	
 }
-.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-left{
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-left,
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container.ck-top-bar-zoom-container-focus .ck-top-bar-zoom-left{
 	border-color: #0368d0;
 }
-.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-left div{
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-left div,
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container.ck-top-bar-zoom-container-focus .ck-top-bar-zoom-left div{
 	background: #0368d0;
 }
 .ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container .ck-top-bar-zoom-right{
@@ -1423,7 +1425,8 @@
 	color: #FFF;
 	padding-left: 5px;
 }
-.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-right{
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container:hover .ck-top-bar-zoom-right,
+.ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container.ck-top-bar-zoom-container-focus .ck-top-bar-zoom-right{
 	color: #0368d0;
 }
 .ckplayer-ckplayer .ck-main .ck-top-bar .ck-top-bar-zoom .ck-top-bar-zoom-container .ck-top-bar-zoom-left .ck-top-bar-zoom-button-50{
