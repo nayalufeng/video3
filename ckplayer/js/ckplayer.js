@@ -709,7 +709,6 @@
 			{vidType:'video/webm',codType:'vp9'},
 			{vidType:'',codType:'application/x-mpegURL'},
 			{vidType:'',codType:'application/vnd.apple.mpegurl'}
-			
 		];
 		var vType={
 			ogg:vTypeArr[0],
@@ -4046,6 +4045,9 @@
 	*/
 	function showError(){
 		C['loading'].hide();
+		if(vars['controls']){
+			return;
+		}
 		if(isUndefined(C['error'])){
 			C['error']=createlDiv('ck-error');
 			CM.append(C['error']);
