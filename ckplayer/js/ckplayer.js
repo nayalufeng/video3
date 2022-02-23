@@ -169,7 +169,7 @@
 	var barShow=true,rightBarShow=true;
 	var EventTarget=null,newEvent=null,eventTargetList=null;//注册监听
 	var loadedTrack=false;//默认未加载字幕
-	var C={};//保存播放器界面上的所有节点节点
+	var C={};//保存播放器界面上的所有节点
 	var CT=null,CK=null,CM=null,CV=null;//CT=播放器容器，页面中已存的，CT>CK>CM>CV>video
 	var pugPlayer=null;//插件播放器
 	var hls=null;//播放hls
@@ -189,9 +189,12 @@
 			return player;
 		}
 		/*
-		 * 转码默认语言包，再检查是否在顶部引入了外部语言包文件，如果引入了，则使用外部语言包替换进language变量
+		 * 转码默认语言包
 		 */
 		language=decodeURIString(language);
+		/*
+		 * 检查是否在顶部引入了外部语言包文件，如果引入了，则使用外部语言包替换进language变量
+		 */
 		if(!isUndefined(window.ckplayerLanguage)){
 			language=mergeObj(language,window.ckplayerLanguage);
 		}
@@ -201,7 +204,7 @@
 		 */
 		eventTarget();
 		/*
-		 * 判断平台类型
+		 * 判断平台类型,主要是判断是否是iphone类型的平台
 		 */
 		app=getApp();
 		/*
@@ -5331,8 +5334,8 @@
 					return this;
 				};
 				/*
-					接口函数
-					缓动效果
+					animate
+					功能：缓动效果
 					parameter:String=需要改变的属性：left,top,width,height,alpha,
 					totalTime:Number=运动的总毫秒数
 					easing:String=效果名称,
@@ -6356,7 +6359,7 @@
 	}
 	/*
 	 * loadJs
-	 * 功能：载js文件并在加载完成后执行callback函数
+	 * 功能：加载js文件并在加载完成后执行callback函数
 	 * @file：js文件地址
 	 * @callback：加载完成后执行的函数
 	*/
