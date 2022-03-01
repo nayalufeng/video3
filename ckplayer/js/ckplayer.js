@@ -375,13 +375,7 @@
 		/*
 		 * 如果video指向一个已存在的video标签对象，则直接调用该对象
 		 */
-		var suffix=vars['video'].toLowerCase();
-		suffix=suffix.substr(suffix.lastIndexOf('.')+1);
-		if(suffix.indexOf('?')>-1){
-			suffix=suffix.substr(0,suffix.indexOf('?'));
-		}
-		var suffixArr=['mp4','flv','m3u8','mov','webm','ogg','ts'];
-		if(valType(vars['video'])=='string' && (vars['video'].substr(0,1)=='.' || vars['video'].substr(0,1)=='#') && suffixArr.indexOf(suffix)==-1){
+		if(valType(vars['video'])=='string' && ((vars['video'].substr(0,1)=='.' && vars['video'].indexOf('/')==-1) || vars['video'].substr(0,1)=='#')){
 			video=$(vars['video']);
 		}
 		/*
