@@ -1501,6 +1501,10 @@
 								else{
 									errorBak();
 								}
+							},success:function(data){
+								if(!data){
+									errorBak();
+								}
 							}});
 						}
 						else{
@@ -6538,7 +6542,9 @@
 						try {
 							successFun(eval('(' + xhr.responseText + ')')); //回调传递参数
 						}
-						catch(event) {}
+						catch(event) {
+							successFun(null);
+						}
 					} else {
 						successFun(xhr.responseText); //回调传递参数
 					}
