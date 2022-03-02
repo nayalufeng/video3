@@ -1460,15 +1460,16 @@
 		},
 		error:function(event){
 			if(!isUndefined(event.type)){
-				var code=12;
-				var msg=language['error']['loadingFailed'];
-				if(event.type=='error'){
-					if(!isUndefined(this.error)){
-						if(!isUndefined(this.error.code)){
-							code=this.error.code;
+				var errorInfo=this.error;
+				var errorBak=function(){
+					var code=12;
+					var msg=language['error']['loadingFailed'];
+					if(!isUndefined(errorInfo)){
+						if(!isUndefined(errorInfo.code)){
+							code=errorInfo.code;
 						}
-						if(!isUndefined(this.error.message)){
-							msg=this.error.message;
+						if(!isUndefined(errorInfo.message)){
+							msg=errorInfo.message;
 						}
 						CT.error={code:code,message:msg};
 						showError();
@@ -1480,6 +1481,28 @@
 						}
 					}
 					eventTarget('error',CT.error);//注册监听error
+				};
+				if(event.type=='error'){
+					try{
+						if(video.currentSrc){
+							ajax({url:video.currentSrc,error:function(info){
+								if(info && valType(info)=='object' && 'code' in info && info['code']){
+									CT.error=info;
+									eventTarget('error',CT.error);//注册监听error
+									showError();
+								}
+								else{
+									errorBak();
+								}
+							}});
+						}
+						else{
+							errorBak();
+						}
+					}
+					catch(event){
+						errorBak();
+					}
 				}
 			}
 		},
@@ -6444,9 +6467,9 @@
 		 * errorFun
 		 *功能：执行error
 		*/
-		var errorFun=function(){
+		var errorFun=function(info){
 			if(!isUndefined(obj['error']) && valType(obj['error'])=='function'){
-				obj['error']();
+				obj['error'](info);
 			}
 			else{
 				obj['success'](null);
@@ -6507,14 +6530,14 @@
 							successFun(eval('(' + xhr.responseText + ')')); //回调传递参数
 						}
 						catch(event) {
-							errorFun();
+							errorFun({code:xhr.status,message:xhr.statusText});
 						}
 					} else {
 						successFun(xhr.responseText); //回调传递参数
 					}
 				} 
 				else {
-					errorFun();
+					errorFun({code:xhr.status,message:xhr.statusText});
 				}
 			};
 			obj.data = formatParams(obj.data); //通过params()将名值对转换成字符串
