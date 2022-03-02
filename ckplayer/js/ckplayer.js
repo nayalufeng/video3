@@ -373,6 +373,13 @@
 		CV=createlDiv('ck-video');
 		CM.append(CV);
 		/*
+		 * 如果已存在video.则先设置成空
+		 */
+		if(video){
+			video.remove();
+			video=null;
+		}
+		/*
 		 * 如果video指向一个已存在的video标签对象，则直接调用该对象
 		 */
 		if(valType(vars['video'])=='string' && ((vars['video'].substr(0,1)=='.' && vars['video'].indexOf('/')==-1) || vars['video'].substr(0,1)=='#')){
@@ -3195,6 +3202,8 @@
 			isChangeDef=true;
 			CT.unbind();
 			video.unbind();
+			video.remove();
+			video=null;
 			if(!isUndefined(C['menu'])){
 				C['menu'].remove();
 			}
@@ -6529,9 +6538,7 @@
 						try {
 							successFun(eval('(' + xhr.responseText + ')')); //回调传递参数
 						}
-						catch(event) {
-							errorFun({code:xhr.status,message:xhr.statusText});
-						}
+						catch(event) {}
 					} else {
 						successFun(xhr.responseText); //回调传递参数
 					}
