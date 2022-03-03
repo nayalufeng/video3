@@ -874,12 +874,12 @@
 		C['bar'].append(C['bar']['fullAndExit']);
 		
 		C['bar']['fullAndExit']['full']=createlButton('ck-bar-btn ck-btn-full');
-		C['bar']['fullAndExit']['full'].click(player.full);
+		C['bar']['fullAndExit']['full'].click(player.fullOrExit);
 		C['bar']['fullAndExit']['full'].mouseover(function(){tip(this,language['full']);});
 		C['bar']['fullAndExit'].append(C['bar']['fullAndExit']['full']);
 			
 		C['bar']['fullAndExit']['exitFull']=createlButton('ck-bar-btn ck-btn-exitfull');
-		C['bar']['fullAndExit']['exitFull'].click(player.exitFull);
+		C['bar']['fullAndExit']['exitFull'].click(player.fullOrExit);
 		C['bar']['fullAndExit']['exitFull'].mouseover(function(){tip(this,language['exitFull']);});
 		C['bar']['fullAndExit'].append(C['bar']['fullAndExit']['exitFull']);	
 			
@@ -3204,14 +3204,20 @@
 			loadedmetadataNum=0;
 			loadedTrack=false;
 			isChangeDef=true;
-			CT.unbind();
-			video.unbind();
-			video.remove();
-			video=null;
+			if(video){
+				video.unbind();
+				video.remove();
+				video=null;
+			}
+			
 			if(!isUndefined(C['menu'])){
 				C['menu'].remove();
 			}
-			CT.htm('');
+			if(CT){
+				CT.unbind();
+				CT.htm('');
+			}
+			return null;
 		}
 	};
 	/*
