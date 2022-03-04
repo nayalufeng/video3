@@ -5001,18 +5001,20 @@
 						// 没有横杠就不进行字符串拆解
 						return str;
 					};
-					if (!value && !isUndefined(key) && valType(key) == 'string') {
-						if (this.currentStyle) {
-							return this.currentStyle[key];
-						} else {
-							return document.defaultView.getComputedStyle(this, null)[key];
+					if (isUndefined(value)){
+						if (!isUndefined(key) && valType(key) == 'string') {
+							if (this.currentStyle) {
+								return this.currentStyle[key];
+							} else {
+								return document.defaultView.getComputedStyle(this, null)[key];
+							}
 						}
-					}
-					if (!value && !key) {
-						if (this.currentStyle) {
-							return this.currentStyle;
-						} else {
-							return document.defaultView.getComputedStyle(this, null);
+						if (isUndefined(key)) {
+							if (this.currentStyle) {
+								return this.currentStyle;
+							} else {
+								return document.defaultView.getComputedStyle(this, null);
+							}
 						}
 					}
 					// 当传进来的参数key不是一个对象，给节点添加css样式
@@ -5615,6 +5617,22 @@
 								else{
 									result=parseInt(vars);
 								}
+								thisTemp.css('right','auto');
+								break;
+							case 'right':
+								if(!isUndefined(thisTemp.css('right'))){
+									current=parseInt(thisTemp.css('right'));
+								}
+								else{
+									current = CK.getWidth()-(thisTemp.offset()['left']-CK.offset()['left']+thisTemp.getWidth());
+								}
+								if (vars.substring(vars.length - 1, vars.length) == '%') {
+									result = parseInt(vars) * w * 0.01;
+								}
+								else{
+									result=parseInt(vars);
+								}
+								thisTemp.css('left','auto');
 								break;
 							case 'top':
 								if(!isUndefined(thisTemp.css('top'))){
@@ -5629,6 +5647,22 @@
 								else{
 									result=parseInt(vars);
 								}
+								thisTemp.css('bottom','auto');
+								break;
+							case 'bottom':
+								if(!isUndefined(thisTemp.css('bottom'))){
+									current=parseInt(thisTemp.css('bottom'));
+								}
+								else{
+									current = CK.getHeight()-(thisTemp.offset()['top']-CK.offset()['top']+thisTemp.getHeight());
+								}
+								if (vars.substring(vars.length - 1, vars.length) == '%') {
+									result = parseInt(vars) * h * 0.01;
+								}
+								else{
+									result=parseInt(vars);
+								}
+								thisTemp.css('top','auto');
 								break;
 							case 'alpha':
 								if(!isUndefined(thisTemp.css('filter')) && thisTemp.css('filter')!='none'){
@@ -5697,8 +5731,14 @@
 										case 'left':
 											styleObj['left']=ap + 'px';
 											break;
+										case 'right':
+											styleObj['right']=ap + 'px';
+											break;
 										case 'top':
 											styleObj['top']=ap + 'px';
+											break;
+										case 'bottom':
+											styleObj['bottom']=ap + 'px';
 											break;
 										case 'alpha':
 											styleObj['filter']='alpha(opacity:' + ap*0.01 + ')';
