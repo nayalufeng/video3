@@ -5584,12 +5584,30 @@
 						var vars=arr[1];
 						var current=0,result=0;
 						switch (arr[0]) {
+							case 'width':
+								current = thisTemp.getWidth();
+								if (vars.substring(vars.length - 1, vars.length) == '%') {
+									result = parseInt(vars) * h * 0.01;
+								}
+								else{
+									result=parseInt(vars);
+								}
+								break;
+							case 'height':
+								current = thisTemp.getHeight();
+								if (vars.substring(vars.length - 1, vars.length) == '%') {
+									result = parseInt(vars) * h * 0.01;
+								}
+								else{
+									result=parseInt(vars);
+								}
+								break;
 							case 'left':
 								if(!isUndefined(thisTemp.css('left'))){
 									current=parseInt(thisTemp.css('left'));
 								}
 								else{
-									current = this.offset()['left']-CK.offset()['left'];
+									current = thisTemp.offset()['left']-CK.offset()['left'];
 								}
 								if (vars.substring(vars.length - 1, vars.length) == '%') {
 									result = parseInt(vars) * w * 0.01;
@@ -5603,7 +5621,7 @@
 									current=parseInt(thisTemp.css('top'));
 								}
 								else{
-									current = this.offset()['top']-CK.offset()['top'];
+									current = thisTemp.offset()['top']-CK.offset()['top'];
 								}
 								if (vars.substring(vars.length - 1, vars.length) == '%') {
 									result = parseInt(vars) * h * 0.01;
@@ -5646,7 +5664,7 @@
 							thisTemp.timerTween = null;
 						}
 					};
-					parameter=parameter.replace(/,/,';');
+					parameter=parameter.replace(/[ ]*,[ ]*|[ ]+/g, ';');
 					var newCss=[];
 					var parameterArr=parameter.split(';');
 					for(var i=0;i<parameterArr.length;i++){
@@ -5668,6 +5686,14 @@
 									var ob=newCss[i];
 									var ap =Math.ceil(tweenFun(funTime, ob['current'], ob['result'], totalTime));
 									switch(ob['type']){
+										case 'width':
+											styleObj['width']=ap + 'px';
+											styleObj['overflow']='hidden';
+											break;
+										case 'height':
+											styleObj['height']=ap + 'px';
+											styleObj['overflow']='hidden';
+											break;
 										case 'left':
 											styleObj['left']=ap + 'px';
 											break;
