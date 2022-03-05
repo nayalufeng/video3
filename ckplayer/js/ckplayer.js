@@ -106,6 +106,8 @@
 		autoplay: false,//是否自动播放
 		loop: false,//是否需要循环播放
 		live: false,//是否是直播
+		rotate:0,//视频旋转角度
+		zoom:0,//默认缩放比例
 		ad:null,//广告
 		backLive:false,//显示返回直播按钮
 		seek: 0,//默认需要跳转的秒数
@@ -175,6 +177,8 @@
 	var hls=null;//播放hls
 	var loadMeta=true;//第一次加载到元数据
 	var app='';//平台类型
+	var nowRotate=0;//当前视频旋转角度
+	var nowZoom=100;//当前缩放比例
 	/*
 	 * into
 	 * 功能：初始化，调用播放器则首先调用该函数
@@ -437,7 +441,22 @@
 		 * 默认设置不显示剧场模式按钮
 		 */
 		CT.theatre=false;
-		loadFace();//加载播放器界面
+		/*
+		 * 加载播放器界面
+		 */
+		loadFace();
+		/*
+		 * 判断是否需要默认旋转视频
+		 */
+		if(vars['rotate']>0){
+			player.rotate(vars['rotate']);
+		}
+		/*
+		 * 判断是否需要默认缩放视频
+		 */
+		if(vars['zoom']>0){
+			player.zoom(vars['zoom']);
+		}
 		/*
 		 * 判断是否支持video标签
 		 */
@@ -1216,8 +1235,8 @@
 		if(!isUndefined(video.emptied)){
 			video.addListener('emptied',videoHandler.emptied);//监听播放结束
 		}
-		video.singleClick(player.playOrPause);//监听视频单击
-		video.doubleClick(player.fullOrExit);//监听视频双击
+		CV.singleClick(player.playOrPause);//监听视频单击
+		CM.doubleClick(player.fullOrExit);//监听视频双击
 		$(document).addListener('keydown',videoHandler.keydown);//监听键盘按键
 		addListener(window, 'resize', videoHandler.resize);//监听窗口尺寸变化
 		if(!isUndefined(vars['smallWindows'])){
@@ -1750,6 +1769,7 @@
 				CT.full=fullState;
 				eventTarget('full',fullState);//注册播放事件
 			}
+			checkVideoRotate();
 			changeProgress(player.time());
 		},
 		keydown:function(e){
@@ -2172,6 +2192,7 @@
 					value+='px';
 				}
 				CT.css({'width':value});
+				checkVideoRotate();
 			}
 			return CK.getWidth();
 		},
@@ -2187,6 +2208,7 @@
 					value+='px';
 				}
 				CT.css({'height':value});
+				checkVideoRotate();
 			}
 			return CK.getHeight();
 		},
@@ -2216,10 +2238,7 @@
 					newEvent.addEventListener('zoom',fn);
 				}
 				if(valType(fn)=='number'){
-					CV.css({
-						'width':fn+'%',
-						'height':fn+'%'
-					});
+					
 					var arr=[C['topBar']['zoomEle']['zoom50'],C['topBar']['zoomEle']['zoom75'],C['topBar']['zoomEle']['zoom100']];
 					for(var i=0;i<arr.length;i++){
 						arr[i].removeClass('ck-top-bar-zoom-container-focus')
@@ -2235,11 +2254,47 @@
 							arr[2].addClass('ck-top-bar-zoom-container-focus');
 							break;
 					}
-					eventTarget('zoom',fn);
+					if(fn==50 || fn==75 || fn==100){
+						nowZoom=fn;
+						checkVideoRotate();//调整视频尺寸
+						eventTarget('zoom',fn);
+					}
+				}
+			}
+			return player;
+		},
+		/*
+		 * rotate
+		 * 提供给播放器外部使用
+		 * 进行旋转
+		 * @obj为新的播放配置对象
+		*/
+		rotate:function(fn){
+			if(!isUndefined(fn)){
+				if(valType(fn)=='function'){
+					newEvent.addEventListener('rotate',fn);
+				}
+				if(valType(fn)=='number'){
+					var arr=[0,90,180,270];
+					var rot=0;
+					if(arr.length>fn && fn>0){
+						rot=arr[fn];
+					}
+					else{
+						if(arr.indexOf(fn)>-1){
+							rot=fn;
+						}
+					}
+					if(rot!=nowRotate){
+						eventTarget('rotate',rot);
+						nowRotate=rot;
+						checkVideoRotate();//调整视频尺寸
+					}
 				}
 			}
 		},
 		/*
+		 * vars
 		 * 提供给播放器外部使用
 		 * 修改vars，动态切换视频地址
 		 * @obj为新的播放配置对象
@@ -2326,7 +2381,7 @@
 					try{video.play();}catch(event){console.error(event)}
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * puase
@@ -2342,7 +2397,7 @@
 					try{video.pause();}catch(event){console.error(event)}
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * playOrPause
@@ -2350,12 +2405,12 @@
 		*/
 		playOrPause:function(){
 			if(paused){
-				this.play();
+				player.play();
 			}
 			else{
-				this.pause();
+				player.pause();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * volume
@@ -2379,7 +2434,7 @@
 			else{
 				return video.volume;
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * muted
@@ -2393,7 +2448,7 @@
 			else{
 				video.muted=true;
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * exitMuted
@@ -2404,7 +2459,7 @@
 			if(video.volume==0){
 				player.volume(.8);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * time
@@ -2470,7 +2525,7 @@
 					video.currentTime=fn;
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * buffer
@@ -2481,7 +2536,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('buffer',fn);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * ended
@@ -2492,7 +2547,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('ended',fn);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * error
@@ -2503,7 +2558,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('error',fn);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * emptied
@@ -2514,7 +2569,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('emptied',fn);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * duration
@@ -2610,8 +2665,8 @@
 			else{
 				time=0;
 			}
-			this.seek(time);
-			return this;
+			player.seek(time);
+			return player;
 		},
 		/*
 		 * fastNext
@@ -2630,8 +2685,8 @@
 			else{
 				time=duration;
 			}
-			this.seek(time);
-			return this;
+			player.seek(time);
+			return player;
 		},
 		/*
 		 * definition
@@ -2647,7 +2702,7 @@
 					changeDefinition(fn);
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * fps
@@ -2673,7 +2728,7 @@
 			else{
 				return playbackTime;
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * backLive
@@ -2693,7 +2748,7 @@
 					}
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * full
@@ -2730,7 +2785,7 @@
 	            }
 	            player.zoom(100);
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * exitFull
@@ -2750,7 +2805,7 @@
 	                wscript.SendKeys('{F11}');
 	            }
 	        }
-	        return this;
+	        return player;
 		},
 		/*
 		 * fullOrExit
@@ -2764,7 +2819,7 @@
 			else{
 				player.full();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * webFull
@@ -2791,8 +2846,9 @@
 				C['bar']['webFullAndExit']['exitWebFull'].show();
 				CT.webFull=true;
 				eventTarget('webfull',true);
+				checkVideoRotate();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * exitWebFull
@@ -2812,7 +2868,8 @@
 			CK.attr('style','');
 			CT.webFull=false;
 			eventTarget('webfull',false);
-			return this;
+			checkVideoRotate();
+			return player;
 		},
 		/*
 		 * theatre
@@ -2848,8 +2905,9 @@
 				
 				CT.theatre=true;
 				eventTarget('theatre',true);
+				checkVideoRotate();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * exitTheatre
@@ -2875,7 +2933,8 @@
 				CT.theatre=false;
 			}
 			eventTarget('theatre',false);
-			return this;
+			checkVideoRotate();
+			return player;
 		},
 		/*
 		 * smallWindows
@@ -2898,6 +2957,7 @@
 						CT.smallWindows=false;
 					}
 					eventTarget('smallWindows',CT.smallWindows);
+					checkVideoRotate();
 				}
 			}
 			return CT.smallWindows;
@@ -2976,7 +3036,7 @@
 					message(language['screenshotClose'],true);
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * closeScreenshot
@@ -2989,7 +3049,7 @@
 			else{
 				C['screenshot'].hide();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * layer
@@ -3094,7 +3154,7 @@
 					});
 				}
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * message
@@ -3102,7 +3162,7 @@
 		*/
 		message:function(str){
 			message(str);
-			return this;
+			return player;
 		},
 		/*
 		 * closeFrontAd
@@ -3114,7 +3174,7 @@
 				adFrontEnded();
 				clearAdFrontSetTime();
 			}
-			return this;
+			return player;
 		},
 		/*
 		 * addListener
@@ -4183,6 +4243,7 @@
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',false);
 				allBarShow();
+				checkVideoRotate();
 			}
 			return;
 		}
@@ -4192,6 +4253,7 @@
 				CK.addClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',true);
 				allBarHide();
+				checkVideoRotate();
 			}
 		}
 		else{
@@ -4199,6 +4261,62 @@
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',false);
 				allBarShow();
+				checkVideoRotate();
+			}
+		}
+	}
+	/*
+	 * checkVideoRotate
+	 * 检查播放器尺寸
+	 */
+	function checkVideoRotate(){
+		var ckW=CK.getWidth()*nowZoom*0.01,ckH=CK.getHeight()*nowZoom*0.01;
+		var vW=CV.getWidth(),vH=CV.getHeight();
+		CV.css({
+			'transform':'rotate('+nowRotate+'deg)',
+			'-ms-transform':'rotate('+nowRotate+'deg)',
+			'-moz-transform':'rotate('+nowRotate+'deg)',
+			'-webkit-transform':'rotate('+nowRotate+'deg)',
+			'-o-transform':'rotate('+nowRotate+'deg)',
+			'width':nowZoom+'%',
+			'height':nowZoom+'%'
+		});
+		if(nowRotate!=0 && nowRotate!=180){
+			var widthChange=false;//是否检查了宽度
+			if(vH>=ckW){
+				CV.css({
+					'width':nowZoom+'%',
+					'height':ckW+'px'
+				});
+				widthChange=true;
+			}
+			if(vW>ckH || (vW==ckH && !widthChange)){
+				CV.css({
+					'height':nowZoom+'%',
+					'width':ckH+'px'
+				});
+			}			
+			if(vH<ckW && vW<ckH){
+				if(ckW>ckH){
+					CV.css({
+						'height':nowZoom+'%',
+						'width':ckH+'px'
+					});
+				}
+				else{
+					if(vH / vW >= ckW / ckH) {
+						CV.css({
+							'width':nowZoom+'%',
+							'height':ckW+'px'
+						});
+					} 
+					else {
+						CV.css({
+							'height':nowZoom+'%',
+							'width':ckH+'px'
+						});
+					}
+				}				
 			}
 		}
 	}
