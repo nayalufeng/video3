@@ -179,6 +179,7 @@
 	var app='';//平台类型
 	var nowRotate=0;//当前视频旋转角度
 	var nowZoom=100;//当前缩放比例
+	var smallWindowState=false;
 	/*
 	 * into
 	 * 功能：初始化，调用播放器则首先调用该函数
@@ -2760,6 +2761,9 @@
 				newEvent.addEventListener('full',fn);
 			}
 			else{
+				if(smallWindowState){
+					return;
+				}
 				if(CT.theatre){
 					player.exitTheatre();
 				}
@@ -4238,10 +4242,11 @@
 	*/
 	function windowScroll() {
 		if(!CT.smallWindows) return;
-		if(CT.webFull || CT.theatre){
+		if(CT.webFull || CT.theatre || CT.full){
 			if(CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',false);
+				smallWindowState=false;
 				allBarShow();
 				checkVideoRotate();
 			}
@@ -4252,6 +4257,7 @@
 			if(!CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.addClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',true);
+				smallWindowState=true;
 				allBarHide();
 				checkVideoRotate();
 			}
@@ -4260,6 +4266,7 @@
 			if(CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',false);
+				smallWindowState=false;
 				allBarShow();
 				checkVideoRotate();
 			}
@@ -4282,20 +4289,21 @@
 			'height':nowZoom+'%'
 		});
 		if(nowRotate!=0 && nowRotate!=180){
-			var widthChange=false;//是否检查了宽度
-			if(vH>=ckW){
-				CV.css({
-					'width':nowZoom+'%',
-					'height':ckW+'px'
-				});
-				widthChange=true;
+			if(vH>ckW && vW>ckH){
+				if(vH / ckW > vW / ckH) {
+					CV.css({
+						'height':nowZoom+'%',
+						'width':ckH+'px'
+					});
+				}
+				else {
+					CV.css({
+						'width':nowZoom+'%',
+						'height':ckW+'px'
+					});
+				}
+				return;
 			}
-			if(vW>ckH || (vW==ckH && !widthChange)){
-				CV.css({
-					'height':nowZoom+'%',
-					'width':ckH+'px'
-				});
-			}			
 			if(vH<ckW && vW<ckH){
 				if(ckW>ckH){
 					CV.css({
@@ -4316,7 +4324,21 @@
 							'width':ckH+'px'
 						});
 					}
-				}				
+				}
+				return;
+			}
+			if(vH>=ckW && vW<=ckH){
+				CV.css({
+					'width':nowZoom+'%',
+					'height':ckW+'px'
+				});
+				return;
+			}
+			if(vW>=ckH && vH<ckW){
+				CV.css({
+					'height':nowZoom+'%',
+					'width':ckH+'px'
+				});
 			}
 		}
 	}
