@@ -1443,7 +1443,6 @@
 				changeLoad();
 			}
 			if(!duration && this.duration){
-				consoleObj(this);
 				duration=this.duration;
 				CT.duration=duration;
 				CT.videoWidth=this.videoWidth;
