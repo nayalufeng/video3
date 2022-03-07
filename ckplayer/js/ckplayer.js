@@ -2775,12 +2775,13 @@
 				}
 				if(CT.webFull){
 					player.exitWebFull();
-				}
+				}				
 				var requestMethod = CK.requestFullScreen || //W3C
-	                CK.webkitRequestFullScreen || //FireFox
-	                CK.mozRequestFullScreen || //Chrome等
-	                CK.msRequestFullScreen; //IE11
-	            if (requestMethod) {
+	                CK.webkitRequestFullScreen || //Chrome等
+	                CK.mozRequestFullScreen || //FireFox
+	                CK.oRequestFullscreen ||
+	                CK.msRequestFullscreen; //IE11
+	            if (!isUndefined(requestMethod)) {
 	                requestMethod.call(CK);
 	            }
 	            else if (!isUndefined(window.ActiveXObject)) { //for Internet Explorer
@@ -2805,11 +2806,12 @@
 			var exitFullFun = document.exitFullscreen || //W3C
 	            document.mozCancelFullScreen || //FireFox
 	            document.webkitExitFullscreen || //Chrome等
-	            document.webkitExitFullscreen; //IE11
-	        if (exitFullFun) {
+	            document.oCancelFullScreen || //Chrome等
+	            document.msExitFullscreen; //IE11
+	        if (!isUndefined(exitFullFun)) {
 	            exitFullFun.call(document);
 	        } 
-	        else if (typeof window.ActiveXObject !== 'undefined') { //for Internet Explorer
+	        else if (!isUndefined(window.ActiveXObject)) { //for Internet Explorer
 	            var wscript = new ActiveXObject('WScript.Shell');
 	            if (wscript !== null) {
 	                wscript.SendKeys('{F11}');
@@ -6845,7 +6847,11 @@
 					try{
 						ele.dispatchEvent(new Event('sigClick'));//注册单击，针对视频播放器使用
 					}
-					catch(event){}
+					catch(event){
+						var e = document.createEvent('HTMLEvents');
+						e.initEvent('sigClick', false, true);
+						ele.dispatchEvent(e);
+					}
 					clickTime=0;
 					setTime=null;
 				},260);
@@ -6858,7 +6864,11 @@
 					try{
 						ele.dispatchEvent(new Event('dobClick'));//注册双击
 					}
-					catch(event){}
+					catch(event){
+						var e = document.createEvent('HTMLEvents');
+						e.initEvent('dobClick', false, true);
+						ele.dispatchEvent(e);
+					}
 					clearTimeout(setTime);
 					clickTime=0;
 					setTime=null;
