@@ -2218,14 +2218,20 @@
 		 * 功能：获取视频本身的宽度，这是一个固定值
 		*/
 		videoWidth:function(){
-			return video.videoWidth;
+			if(video){
+				return video.videoWidth;
+			}
+			return null;
 		},
 		/*
 		 * videoHeight
 		 * 功能：获取视频本身的高度，这是一个固定值
 		*/
 		videoHeight:function(){
-			return video.videoHeight;
+			if(video){
+				return video.videoHeight;
+			}
+			return null;
 		},
 		/*
 		 * height
@@ -2239,7 +2245,6 @@
 					newEvent.addEventListener('zoom',fn);
 				}
 				if(valType(fn)=='number'){
-					
 					var arr=[C['topBar']['zoomEle']['zoom50'],C['topBar']['zoomEle']['zoom75'],C['topBar']['zoomEle']['zoom100']];
 					for(var i=0;i<arr.length;i++){
 						arr[i].removeClass('ck-top-bar-zoom-container-focus')
@@ -2378,7 +2383,7 @@
 				newEvent.addEventListener('play',fn);
 			}
 			else{
-				if(loadedmetadataNum>0){
+				if(loadedmetadataNum>0 && video){
 					try{video.play();}catch(event){console.error(event)}
 				}
 			}
@@ -2394,7 +2399,7 @@
 				newEvent.addEventListener('pause',fn);
 			}
 			else{
-				if(loadedmetadataNum>0){
+				if(loadedmetadataNum>0 && video){
 					try{video.pause();}catch(event){console.error(event)}
 				}
 			}
@@ -2423,7 +2428,7 @@
 				if(valType(fn)=='function'){
 					newEvent.addEventListener('volume', fn);
 				}
-				else if(valType(fn)=='number'){
+				else if(valType(fn)=='number' && video){
 					if(fn<0)fn=0;
 					if(fn>1)fn=1;
 					if(video.muted){
@@ -2432,7 +2437,7 @@
 					video.volume=fn;
 				}
 			}
-			else{
+			else if(video){
 				return video.volume;
 			}
 			return player;
@@ -2446,7 +2451,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('muted', fn);
 			}
-			else{
+			else if(video){
 				video.muted=true;
 			}
 			return player;
@@ -2456,9 +2461,11 @@
 		 * 功能：执行取消静音操作
 		*/
 		exitMuted:function(){
-			video.muted=false;
-			if(video.volume==0){
-				player.volume(.8);
+			if(video){
+				video.muted=false;
+				if(video.volume==0){
+					player.volume(.8);
+				}
 			}
 			return player;
 		},
@@ -2471,7 +2478,7 @@
 			if(!isUndefined(fn) && valType(fn)=='function'){
 				newEvent.addEventListener('time',fn);
 			}
-			else{
+			else if(video){
 				return video.currentTime || 0;
 			}
 		},
@@ -2485,7 +2492,7 @@
 				if(valType(fn)=='function'){
 					newEvent.addEventListener('seek',fn);
 				}
-				if(valType(fn)=='number'){
+				if(valType(fn)=='number' && video){
 					switch(vars['timeScheduleAdjust']){
 						case 0://禁止拖动
 							message(language['timeScheduleAdjust']['prohibit']);
@@ -2595,7 +2602,7 @@
 				if(valType(fn)=='function'){
 					newEvent.addEventListener('playbackRate',fn);
 				}
-				else if(valType(fn)=='number'){
+				else if(valType(fn)=='number' && video){
 					video.playbackRate=fn;
 					CT.playbackRate=fn;
 					eventTarget('playbackRate',fn);
@@ -2617,7 +2624,7 @@
 				if(valType(fn)=='function'){
 					newEvent.addEventListener('track',fn);
 				}
-				else if(valType(fn)=='number'){
+				else if(valType(fn)=='number' && video){
 					var track=null;
 					if(!isUndefined(video.textTracks)){
 						track=video.textTracks;
@@ -2976,7 +2983,7 @@
 				if(valType(fn)=='function'){
 					newEvent.addEventListener('loop',fn);
 				}
-				if(valType(fn)=='boolean'){
+				if(valType(fn)=='boolean' && video){
 					if(fn){
 						C['rightBar']['loop']['open'].show();
 						C['rightBar']['loop']['close'].hide();
@@ -3006,7 +3013,7 @@
 				newEvent.addEventListener('screenshot',fn);
 			}
 			else{
-				if(!isUndefined(vars['screenshot']) && vars['screenshot']){
+				if(!isUndefined(vars['screenshot']) && vars['screenshot'] && video){
 					try {
 						message(language['screenshotStart'],true);
 						var newCanvas = $(document.createElement('canvas'));
@@ -6776,7 +6783,7 @@
 				}
 			}
 			if (obj.async === true) { //true表示异步，false表示同步
-				addListener(xhr,'readystatechange',function(e){
+				addListener(xhr,'readystatechange',function(event){
 					if (this.readyState === 4 && callback != null) { //判断对象的状态是否交互完成
 						callback(); //回调
 					}
