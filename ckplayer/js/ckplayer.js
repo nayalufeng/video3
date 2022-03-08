@@ -127,6 +127,7 @@
 		controls:false,//是否显示自带控制栏
 		rightBar:null,//是否开启右边控制栏
 		smallWindows:null,//是否启用小窗口模式
+		smallWindowsDrag:true,//当处于小窗口模式时是否可拖动播放器
 		screenshot:false,//截图功能是否开启
 		timeScheduleAdjust:1,//是否可调节播放进度,0不启用，1是启用，2是只能前进（向右拖动），3是只能后退，4是只能前进但能回到第一次拖动时的位置，5是看过的地方可以随意拖动
 		logo:'',//logo
@@ -179,7 +180,9 @@
 	var app='';//平台类型
 	var nowRotate=0;//当前视频旋转角度
 	var nowZoom=100;//当前缩放比例
-	var smallWindowState=false;
+	var smallWindowsState=false;//当前是否处理小窗口状态
+	var isDrag=false;//是否在播放器上按下并且拖动
+	
 	/*
 	 * into
 	 * 功能：初始化，调用播放器则首先调用该函数
@@ -1245,7 +1248,15 @@
 		if(!isUndefined(video.emptied)){
 			video.addListener('emptied',videoHandler.emptied);//监听播放结束
 		}
-		CV.singleClick(player.playOrPause);//监听视频单击
+		//CV.singleClick(player.playOrPause);//监听视频单击
+		CV.singleClick(function(){
+			if(!isDrag){
+				player.playOrPause();
+			}
+			else{
+				isDrag=false;
+			}
+		});
 		CM.doubleClick(player.fullOrExit);//监听视频双击
 		$(document).addListener('keydown',videoHandler.keydown);//监听键盘按键
 		addListener(window, 'resize', videoHandler.resize);//监听窗口尺寸变化
@@ -2776,7 +2787,7 @@
 				newEvent.addEventListener('full',fn);
 			}
 			else{
-				if(smallWindowState){
+				if(smallWindowsState){
 					return;
 				}
 				if(CT.theatre){
@@ -4263,7 +4274,10 @@
 			if(CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',false);
-				smallWindowState=false;
+				smallWindowsState=false;
+				if(vars['smallWindowsDrag']){
+					CK.drag();
+				}
 				allBarShow();
 				checkVideoRotate();
 			}
@@ -4274,7 +4288,10 @@
 			if(!CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.addClass('ckplayer-ckplayer-smallwindow');
 				eventTarget('smallWindows',true);
-				smallWindowState=true;
+				smallWindowsState=true;
+				if(vars['smallWindowsDrag']){
+					CK.drag(true);
+				}
 				allBarHide();
 				checkVideoRotate();
 			}
@@ -4282,8 +4299,11 @@
 		else{
 			if(CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
+				if(vars['smallWindowsDrag']){
+					CK.drag();
+				}
 				eventTarget('smallWindows',false);
-				smallWindowState=false;
+				smallWindowsState=false;
 				allBarShow();
 				checkVideoRotate();
 			}
@@ -5936,6 +5956,69 @@
 						this.tweenPlay=false;
 					}
 					return this;
+				};
+				/*
+				 * drag
+				 * 功能，使节点可拖动
+				 * state：是否开启可拖动，默认=false，关闭状态
+				*/
+				res.drag = function(state) {
+					var doc=$(document);
+					var thisTemp=this;
+					var posX = 0,posY = 0,
+						posXRecord = 0,posYRecord = 0;
+					var open=false;
+					if(!isUndefined(state)){
+						open=state;
+					}
+					var mouseDown = function(e) {
+						e.preventDefault && e.preventDefault();
+						e = e || window.event;
+						var client = getClient(e);
+						posXRecord = client['x'];
+						posYRecord = client['y'];
+						doc.mousemove(docMouseMove);
+						doc.mouseup(docMouseUp);
+						thisTemp.css({
+							'cursor':'move'
+						});
+					};
+					var docMouseMove = function(e) {
+						e = e || window.event;
+						var client = getClient(e);
+						var eleOffset = thisTemp.offset();
+						posY = client['y']-posYRecord;
+						posX = client['x']-posXRecord;
+						posXRecord = client['x'];
+						posYRecord = client['y'];
+						var left=eleOffset['left']+posX;
+						var top=eleOffset['top']+posY;
+						thisTemp.css({
+							'left':left+'px',
+							'top':top+'px'
+						});
+						if(thisTemp.css('position')!='fixed'){
+							thisTemp.css({
+								'position':'fixed'
+							});
+						}
+						if(thisTemp==CK){
+							isDrag=true;
+						}
+					};
+					var docMouseUp = function() {
+						doc.removeListener('mousemove', docMouseMove);
+						doc.removeListener('mouseup', docMouseUp);
+						thisTemp.css({
+							'cursor':'default'
+						});
+					};
+					if(open){
+						thisTemp.mousedown(mouseDown);
+					}
+					else{
+						thisTemp.unbind('mousedown');
+					}
 				};
 			} else {
 				/*
