@@ -600,10 +600,19 @@
 			case 'mpegts.js':
 				mpegtsPlayer(url);
 				break;
+			case 'dash.js':
+				dashPlayer(url);
+				break;	
 			default:
-				CT.error={code:10,message:language['error']['emptied']};
-				eventTarget('error',CT.error);//注册监听error
-				showError();
+				if(valType(vars['plug'])=='function'){
+					vars['plug'](video,url);
+				}
+				else{
+					CT.error={code:10,message:language['error']['emptied']};
+					eventTarget('error',CT.error);//注册监听error
+					showError();
+				}
+				
 				break;
 		}
 	}
@@ -6609,7 +6618,7 @@
 		var scriptList = document.scripts;
 		for (var i = 0; i < scriptList.length; i++) {
 			if(scriptList[i].src==file){
-				return true;
+				return scriptList[i];
 			}
 		}
 		return false;
