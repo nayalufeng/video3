@@ -9,74 +9,127 @@
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global.ckplayer = factory());
 }(this, function () { 'use strict';
+	/*
+	 * language
+	 * 功能：静态变量,包含播放器用到的默认语言包
+	 * 引入其它语言js后该变量将被替换成新引入的语言包
+	 */
+	var language={
+		play:'%E6%92%AD%E6%94%BE',
+		pause:'%E6%9A%82%E5%81%9C',
+		refresh:'%E9%87%8D%E6%92%AD',
+		full:'%E5%85%A8%E5%B1%8F',
+		exitFull:'%E9%80%80%E5%87%BA%E5%85%A8%E5%B1%8F',
+		webFull:'%E9%A1%B5%E9%9D%A2%E5%85%A8%E5%B1%8F',
+		exitWebFull:'%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2%E5%85%A8%E5%B1%8F',
+		theatre:'%E5%89%A7%E5%9C%BA%E6%A8%A1%E5%BC%8F',
+		exitTheatre:'%E9%80%80%E5%87%BA%E5%89%A7%E5%9C%BA%E6%A8%A1%E5%BC%8F',
+		volume:'%E9%9F%B3%E9%87%8F%EF%BC%9A',
+		muted:'%E9%9D%99%E9%9F%B3',
+		exitmuted:'%E6%81%A2%E5%A4%8D%E9%9F%B3%E9%87%8F',
+		seek:'seek%EF%BC%9A',
+		waiting:'%E7%BC%93%E5%86%B2',
+		live:'%E7%9B%B4%E6%92%AD%E4%B8%AD',
+		backLive:'%E8%BF%94%E5%9B%9E%E7%9B%B4%E6%92%AD',
+		lookBack:'%E5%9B%9E%E7%9C%8B%EF%BC%9A',
+		next:'%E4%B8%8B%E4%B8%80%E9%9B%86',
+		screenshot:'%E8%A7%86%E9%A2%91%E6%88%AA%E5%9B%BE',
+		smallwindows:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E6%92%AD%E6%94%BE%E5%8A%9F%E8%83%BD',
+		playbackrate:'%E5%80%8D%E9%80%9F',
+		playbackrateSuffix:'%E5%80%8D',
+		track:'%E5%AD%97%E5%B9%95',
+		noTrack:'%E6%97%A0%E5%AD%97%E5%B9%95',
+		definition:'%E6%B8%85%E6%99%B0%E5%BA%A6',
+		switchTo:'%E5%88%87%E6%8D%A2%E6%88%90%EF%BC%9A',
+		closeTime:'%7Bseconds%7D%E7%A7%92%E5%90%8E%E5%8F%AF%E5%85%B3%E9%97%AD%E5%B9%BF%E5%91%8A',
+		closeAd:'%E5%85%B3%E9%97%AD%E5%B9%BF%E5%91%8A',
+		second:'%E7%A7%92',
+		details:'%E6%9F%A5%E7%9C%8B%E8%AF%A6%E6%83%85',
+		copy:'%E5%A4%8D%E5%88%B6',
+		copySucceeded:'%E5%A4%8D%E5%88%B6%E6%88%90%E5%8A%9F%EF%BC%8C%E5%8F%AF%E8%B4%B4%E7%B2%98%EF%BC%81',
+		smallwindowsOpen:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%BC%80%E5%90%AF',
+		smallwindowsClose:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%85%B3%E9%97%AD',
+		screenshotStart:'%E6%88%AA%E5%9B%BE%E4%B8%AD%EF%BC%8C%E8%AF%B7%E7%A8%8D%E5%80%99...',
+		screenshotClose:'%E6%88%AA%E5%9B%BE%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%85%B3%E9%97%AD',
+		loopOpen:'%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE',
+		loopClose:'%E5%B7%B2%E5%85%B3%E9%97%AD%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE',
+		close:'%E5%85%B3%E9%97%AD',
+		down:'%E4%B8%8B%E8%BD%BD',
+		p50:'50%25',
+		p75:'75%25',
+		p100:'100%25',
+		timeScheduleAdjust:{
+			prohibit:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%8B%96%E5%8A%A8',
+			prohibitBackOff:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E9%87%8D%E5%A4%8D%E8%A7%82%E7%9C%8B',
+			prohibitForward:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E5%BF%AB%E8%BF%9B',
+			prohibitLookBack:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%92%AD%E6%94%BE%E9%83%A8%E5%88%86%E5%86%85%E5%AE%B9',
+			prohibitForwardNotViewed:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%92%AD%E6%94%BE%E6%9C%AA%E8%A7%82%E7%9C%8B%E7%9A%84%E9%83%A8%E5%88%86'
+		},
+		error:{
+			noMessage:'%E6%9C%AA%E7%9F%A5%E9%94%99%E8%AF%AF',
+			supportVideoError:'%E8%AF%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E7%89%88%E6%9C%AC%E5%A4%AA%E4%BD%8E%EF%BC%8C%E5%BB%BA%E8%AE%AE%E6%9B%B4%E6%8D%A2%E6%88%90%E5%85%B6%E5%AE%83%E6%B5%8F%E8%A7%88%E5%99%A8',
+			videoTypeError:'%E8%AF%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E6%94%AF%E6%8C%81%E6%92%AD%E6%94%BE%E8%AF%A5%E8%A7%86%E9%A2%91%EF%BC%8C%E5%BB%BA%E8%AE%AE%E6%9B%B4%E6%8D%A2%E6%88%90%E5%85%B6%E5%AE%83%E6%B5%8F%E8%A7%88%E5%99%A8',
+			loadingFailed:'%E5%8A%A0%E8%BD%BD%E5%A4%B1%E8%B4%A5',
+			emptied:'%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%87%BA%E7%8E%B0%E9%94%99%E8%AF%AF',
+			screenshot:'%E8%A7%86%E9%A2%91%E6%88%AA%E5%9B%BE%E5%A4%B1%E8%B4%A5',
+			ajax:'Ajax%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82%E9%94%99%E8%AF%AF',
+			noVideoContainer:'%E6%9C%AA%E6%89%BE%E5%88%B0%E6%94%BE%E7%BD%AE%E8%A7%86%E9%A2%91%E7%9A%84%E5%AE%B9%E5%99%A8'
+		}
+	};
+	/*
+	 * videoObjectDefault
+	 * 功能：静态变量,默认播放配置，当外部传递过来的配置有未包含在varsDefault里的，则使用varsDefault里的配置
+	 */
+	var videoObjectDefault= {
+		container: '',//视频容器的ID
+		volume: 0.8,//默认音量，范围0-1
+		poster: '',//封面图片地址
+		autoplay: false,//是否自动播放
+		loop: false,//是否需要循环播放
+		live: false,//是否是直播
+		rotate:0,//视频旋转角度
+		zoom:0,//默认缩放比例
+		ad:null,//广告
+		backLive:false,//显示返回直播按钮
+		seek: 0,//默认需要跳转的秒数
+		next: null,//下一集按钮动作
+		loaded: '',//加载播放器后调用的函数
+		plug: '',//使用插件
+		duration:0,//视频总时间
+		preview: null,//预览图片对象
+		prompt: null,//提示点功能
+		crossOrigin:'',//跨域请求字符
+		video: null,//视频地址
+		type:'',//视频类型
+		playbackrate: 1,//默认倍速
+		ended:null,//结束显示的内容
+		webFull:false,//页面全屏按钮事件
+		theatre:null,//剧场模式
+		controls:false,//是否显示自带控制栏
+		rightBar:null,//是否开启右边控制栏
+		smallWindows:null,//是否启用小窗口模式
+		smallWindowsDrag:true,//当处于小窗口模式时是否可拖动播放器
+		screenshot:false,//截图功能是否开启
+		timeScheduleAdjust:1,//是否可调节播放进度,0不启用，1是启用，2是只能前进（向右拖动），3是只能后退，4是只能前进但能回到第一次拖动时的位置，5是看过的地方可以随意拖动
+		logo:'',//logo
+		menu:null,//右键菜单
+		information:{//关于
+			'Load:':'{loadTime} second',
+			'Duration:':'{duration} second',
+			'Size:':'{videoWidth}x{videoHeight}',
+			'Volume:':'{volume}%',
+			'Fps:':'{fps}fps',
+			'Sudio decoded:':'{audioDecodedByteCount} Byte',
+			'Video decoded:':'{videoDecodedByteCount} Byte'
+		},
+		track:null,//字幕
+		title:'',//视频标题
+		language:'',//语言包文件
+		barHideTime:1500,//控制栏隐藏时间
+		playbackrateOpen:true,//是否开启控制栏倍速选项
+		playbackrateList:[0.75,1,1.25,1.5,2,4]//倍速配置值
+	};
 	function ckplayerEmbed(videoObj){
-		/*
-		 * language
-		 * 功能：全局变量,包含播放器用到的默认语言包
-		 * 引入其它语言js后该变量将被替换成新引入的语言包
-		 */
-		var language={
-			play:'%E6%92%AD%E6%94%BE',
-			pause:'%E6%9A%82%E5%81%9C',
-			refresh:'%E9%87%8D%E6%92%AD',
-			full:'%E5%85%A8%E5%B1%8F',
-			exitFull:'%E9%80%80%E5%87%BA%E5%85%A8%E5%B1%8F',
-			webFull:'%E9%A1%B5%E9%9D%A2%E5%85%A8%E5%B1%8F',
-			exitWebFull:'%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2%E5%85%A8%E5%B1%8F',
-			theatre:'%E5%89%A7%E5%9C%BA%E6%A8%A1%E5%BC%8F',
-			exitTheatre:'%E9%80%80%E5%87%BA%E5%89%A7%E5%9C%BA%E6%A8%A1%E5%BC%8F',
-			volume:'%E9%9F%B3%E9%87%8F%EF%BC%9A',
-			muted:'%E9%9D%99%E9%9F%B3',
-			exitmuted:'%E6%81%A2%E5%A4%8D%E9%9F%B3%E9%87%8F',
-			seek:'seek%EF%BC%9A',
-			waiting:'%E7%BC%93%E5%86%B2',
-			live:'%E7%9B%B4%E6%92%AD%E4%B8%AD',
-			backLive:'%E8%BF%94%E5%9B%9E%E7%9B%B4%E6%92%AD',
-			lookBack:'%E5%9B%9E%E7%9C%8B%EF%BC%9A',
-			next:'%E4%B8%8B%E4%B8%80%E9%9B%86',
-			screenshot:'%E8%A7%86%E9%A2%91%E6%88%AA%E5%9B%BE',
-			smallwindows:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E6%92%AD%E6%94%BE%E5%8A%9F%E8%83%BD',
-			playbackrate:'%E5%80%8D%E9%80%9F',
-			playbackrateSuffix:'%E5%80%8D',
-			track:'%E5%AD%97%E5%B9%95',
-			noTrack:'%E6%97%A0%E5%AD%97%E5%B9%95',
-			definition:'%E6%B8%85%E6%99%B0%E5%BA%A6',
-			switchTo:'%E5%88%87%E6%8D%A2%E6%88%90%EF%BC%9A',
-			closeTime:'%7Bseconds%7D%E7%A7%92%E5%90%8E%E5%8F%AF%E5%85%B3%E9%97%AD%E5%B9%BF%E5%91%8A',
-			closeAd:'%E5%85%B3%E9%97%AD%E5%B9%BF%E5%91%8A',
-			second:'%E7%A7%92',
-			details:'%E6%9F%A5%E7%9C%8B%E8%AF%A6%E6%83%85',
-			copy:'%E5%A4%8D%E5%88%B6',
-			copySucceeded:'%E5%A4%8D%E5%88%B6%E6%88%90%E5%8A%9F%EF%BC%8C%E5%8F%AF%E8%B4%B4%E7%B2%98%EF%BC%81',
-			smallwindowsOpen:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%BC%80%E5%90%AF',
-			smallwindowsClose:'%E5%B0%8F%E7%AA%97%E5%8F%A3%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%85%B3%E9%97%AD',
-			screenshotStart:'%E6%88%AA%E5%9B%BE%E4%B8%AD%EF%BC%8C%E8%AF%B7%E7%A8%8D%E5%80%99...',
-			screenshotClose:'%E6%88%AA%E5%9B%BE%E5%8A%9F%E8%83%BD%E5%B7%B2%E5%85%B3%E9%97%AD',
-			loopOpen:'%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE',
-			loopClose:'%E5%B7%B2%E5%85%B3%E9%97%AD%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE',
-			close:'%E5%85%B3%E9%97%AD',
-			down:'%E4%B8%8B%E8%BD%BD',
-			p50:'50%25',
-			p75:'75%25',
-			p100:'100%25',
-			timeScheduleAdjust:{
-				prohibit:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%8B%96%E5%8A%A8',
-				prohibitBackOff:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E9%87%8D%E5%A4%8D%E8%A7%82%E7%9C%8B',
-				prohibitForward:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E5%BF%AB%E8%BF%9B',
-				prohibitLookBack:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%92%AD%E6%94%BE%E9%83%A8%E5%88%86%E5%86%85%E5%AE%B9',
-				prohibitForwardNotViewed:'%E8%A7%86%E9%A2%91%E7%A6%81%E6%AD%A2%E6%92%AD%E6%94%BE%E6%9C%AA%E8%A7%82%E7%9C%8B%E7%9A%84%E9%83%A8%E5%88%86'
-			},
-			error:{
-				noMessage:'%E6%9C%AA%E7%9F%A5%E9%94%99%E8%AF%AF',
-				supportVideoError:'%E8%AF%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E7%89%88%E6%9C%AC%E5%A4%AA%E4%BD%8E%EF%BC%8C%E5%BB%BA%E8%AE%AE%E6%9B%B4%E6%8D%A2%E6%88%90%E5%85%B6%E5%AE%83%E6%B5%8F%E8%A7%88%E5%99%A8',
-				videoTypeError:'%E8%AF%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E6%94%AF%E6%8C%81%E6%92%AD%E6%94%BE%E8%AF%A5%E8%A7%86%E9%A2%91%EF%BC%8C%E5%BB%BA%E8%AE%AE%E6%9B%B4%E6%8D%A2%E6%88%90%E5%85%B6%E5%AE%83%E6%B5%8F%E8%A7%88%E5%99%A8',
-				loadingFailed:'%E5%8A%A0%E8%BD%BD%E5%A4%B1%E8%B4%A5',
-				emptied:'%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%87%BA%E7%8E%B0%E9%94%99%E8%AF%AF',
-				screenshot:'%E8%A7%86%E9%A2%91%E6%88%AA%E5%9B%BE%E5%A4%B1%E8%B4%A5',
-				ajax:'Ajax%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82%E9%94%99%E8%AF%AF',
-				noVideoContainer:'%E6%9C%AA%E6%89%BE%E5%88%B0%E6%94%BE%E7%BD%AE%E8%A7%86%E9%A2%91%E7%9A%84%E5%AE%B9%E5%99%A8'
-			}
-		};
 		/*
 		 * rightMenu
 		 * 功能：全局变量,右键内容
@@ -96,59 +149,6 @@
 				click:'aboutShow'
 			}
 		];
-		/*
-		 * videoObjectDefault
-		 * 功能：全局变量,默认播放配置，当外部传递过来的配置有未包含在varsDefault里的，则使用varsDefault里的配置
-		 */
-		var videoObjectDefault= {
-			container: '',//视频容器的ID
-			volume: 0.8,//默认音量，范围0-1
-			poster: '',//封面图片地址
-			autoplay: false,//是否自动播放
-			loop: false,//是否需要循环播放
-			live: false,//是否是直播
-			rotate:0,//视频旋转角度
-			zoom:0,//默认缩放比例
-			ad:null,//广告
-			backLive:false,//显示返回直播按钮
-			seek: 0,//默认需要跳转的秒数
-			next: null,//下一集按钮动作
-			loaded: '',//加载播放器后调用的函数
-			plug: '',//使用插件
-			duration:0,//视频总时间
-			preview: null,//预览图片对象
-			prompt: null,//提示点功能
-			crossOrigin:'',//跨域请求字符
-			video: null,//视频地址
-			type:'',//视频类型
-			playbackrate: 1,//默认倍速
-			ended:null,//结束显示的内容
-			webFull:false,//页面全屏按钮事件
-			theatre:null,//剧场模式
-			controls:false,//是否显示自带控制栏
-			rightBar:null,//是否开启右边控制栏
-			smallWindows:null,//是否启用小窗口模式
-			smallWindowsDrag:true,//当处于小窗口模式时是否可拖动播放器
-			screenshot:false,//截图功能是否开启
-			timeScheduleAdjust:1,//是否可调节播放进度,0不启用，1是启用，2是只能前进（向右拖动），3是只能后退，4是只能前进但能回到第一次拖动时的位置，5是看过的地方可以随意拖动
-			logo:'',//logo
-			menu:null,//右键菜单
-			information:{//关于
-				'Load:':'{loadTime} second',
-				'Duration:':'{duration} second',
-				'Size:':'{videoWidth}x{videoHeight}',
-				'Volume:':'{volume}%',
-				'Fps:':'{fps}fps',
-				'Sudio decoded:':'{audioDecodedByteCount} Byte',
-				'Video decoded:':'{videoDecodedByteCount} Byte'
-			},
-			track:null,//字幕
-			title:'',//视频标题
-			language:'',//语言包文件
-			barHideTime:1500,//控制栏隐藏时间
-			playbackrateOpen:true,//是否开启控制栏倍速选项
-			playbackrateList:[0.75,1,1.25,1.5,2,4]//倍速配置值
-		};
 		var vars={},varsTemp={};//保存传递过来的videoObject
 		var video=null;//视频播放器对象
 		var duration=0;//总时间
@@ -189,7 +189,7 @@
 		 * 功能：初始化，调用播放器则首先调用该函数
 		 * @obj=初始化时的配置对象：videoObject
 		*/
-		function into(obj){
+		var into=function(obj){
 			/*
 			 * 如果未传递初始化配置对象，则为player变量增加一个add函数，功能相当于into
 			 */
@@ -266,13 +266,13 @@
 				showWindowsError(language['error']['noVideoContainer']);
 				return null;
 			}
-		}
+		},
 		/*
 		 * bodyReady
 		 * 功能：页面加载完成后构建播放器
 		 * @obj=初始化时的配置对象
 		*/
-		function bodyReady(obj){
+		bodyReady=function (obj){
 			documentReady(function(){
 				if(!isUndefined(obj['container'])){
 					CT=$(obj['container']);
@@ -289,13 +289,13 @@
 				}
 			});
 			return null;
-		}
+		},
 		/*
 		 * ajaxWebsite
 		 * 功能：页面加载完成后重新初始化
 		 * @obj=初始化时的配置对象
 		 */
-		function ajaxWebsite(obj){
+		ajaxWebsite=function (obj){
 			if(valType(obj['video'])=='string' && (obj['video'].substr(0,8)=='website:' || obj['video'].substr(0,4)=='url:')){
 				varsTemp = standardization(varsTemp, obj);
 				var ajaxUrl='';
@@ -319,13 +319,13 @@
 				showWindowsError(language['error']['noVideoContainer']);
 				return null;
 			}
-		}
+		},
 		/*
 		 * loadLanguage
 		 * 功能：加载Language
 		 * @obj=初始化时的配置对象
 		*/
-		function loadLanguage(obj){
+		loadLanguage=function (obj){
 			vars = standardization(varsTemp, obj);
 			if(vars['language']){
 				var path=getPath('language')+vars['language']+'.js';
@@ -339,13 +339,13 @@
 			else{
 				return embed(obj);
 			}
-		}
+		},
 		/*
 		 * embed
 		 * 功能：构建播放器
 		 * @obj=初始化时的配置对象
 		*/
-		function embed(obj){
+		embed=function (obj){
 			/*
 			 * 判断静音状态
 			 */
@@ -490,12 +490,12 @@
 			}
 			changeVideo(vars['video']);//播放视频
 			return player;
-		}
+		},
 		/*
 		 * changeVideo
 		 * 功能：初始化视频地址或修改视频地址
 		*/
-		function changeVideo(vstr){
+		changeVideo=function (vstr){
 			var i=0;
 			if(video.attr('src') || video.htm()){
 				player.pause();
@@ -587,12 +587,12 @@
 			if(isChangeDef){
 				checkDefinition();
 			}
-		}
+		},
 		/*
 		 * plugPlayer
 		 * 功能：使用插件进行播放
 		*/
-		function plugPlayer(url){
+		plugPlayer=function (url){
 			switch(vars['plug']){
 				case 'hls.js':
 					hlsPlayer(url);
@@ -618,12 +618,12 @@
 					
 					break;
 			}
-		}
+		},
 		/*
 		 * hlsPlayer
 		 * 功能：使用hls.js插件进行播放
 		*/
-		function hlsPlayer(url){
+		hlsPlayer=function (url){
 			var path=getPath('hls.js')+'hls.min.js';
 			loadJs(path,function(){
 				if (!isUndefined(Hls) && Hls.isSupported()) {
@@ -658,12 +658,12 @@
 					video.attr('src',url);
 				}
 			});
-		}
+		},
 		/*
 		 * flvPlayer
 		 * 功能：使用flv.js插件进行播放
 		*/
-		function flvPlayer(url){
+		flvPlayer=function (url){
 			var path=getPath('flv.js')+'flv.min.js';
 			loadJs(path,function(){
 				if (typeof(flvjs)!='undefined' && !isUndefined(flvjs) && flvjs.isSupported()) {
@@ -697,12 +697,12 @@
 			        });
 			    }
 			});
-		}
+		},
 		/*
 		 * mpegtsPlayer
 		 * 功能：使用mpegts.js插件进行播放
 		*/
-		function mpegtsPlayer(url){
+		mpegtsPlayer=function (url){
 			var path=getPath('mpegts.js')+'mpegts.js';
 			loadJs(path,function(){
 				if (typeof(mpegts)!='undefined' && !isUndefined(mpegts) && mpegts.getFeatureList().mseLivePlayback) {
@@ -737,12 +737,12 @@
 			        });
 			    }
 			});
-		}
+		},
 		/*
 		 * canPlay
 		 * 功能：判断是否能支持相关视频格式
 		*/
-		function canPlay(vStr,num){
+		canPlay=function(vStr,num){
 			var vTypeArr=[
 				{vidType:'video/ogg',codType:'theora, vorbis'},
 				{vidType:'video/mp4',codType:'avc1.4D401E, mp4a.40.2'},
@@ -820,12 +820,12 @@
 				showError();
 			}
 			return is;
-		}
+		},
 		/*
 		 * loadFace
 		 * 功能：加载界面
 		*/
-		function loadFace(){
+		loadFace=function(){
 			//loading容器
 			C['loading']=createlDiv('ck-loading');
 			CM.append(C['loading']);
@@ -1224,12 +1224,12 @@
 					C['topBar'].removeClass('ck-top-bar-hide');
 				}
 			});
-		}
+		},
 		/*
 		 * addAllListener
 		 * 功能：注册播放器的全部监听
 		*/
-		function addAllListener(){
+		addAllListener=function(){
 			video.addListener('stalled',videoHandler.stalled);//在浏览器不论何种原因未能取回媒介数据时运行的脚本
 			video.addListener('suspend',videoHandler.suspend);//在媒介数据完全加载之前不论何种原因终止取回媒介数据时运行的脚本
 			video.addListener('loadeddata',videoHandler.loadedData);//监听视频数据已加载
@@ -1265,12 +1265,12 @@
 					addListener(window, 'scroll', windowScroll);//监听窗口滚动
 				}
 			}
-		}
+		},
 		/*
 		 * eventTarget
 		 * 功能：注册事件，将事件注册给CT对象供外部监听
 		*/
-		function eventTarget(name,obj){
+		eventTarget=function(name,obj){
 			try{
 				if(EventTarget!=null){
 					if(isUndefined(obj)){
@@ -1316,12 +1316,12 @@
 				}
 			}
 			catch(event){console.error(event)}
-		}
+		},
 		/*
 		 * loadTrack
 		 * 功能：加载track
 		*/
-		function loadTrack(){
+		loadTrack=function(){
 			if(isUndefined(video.textTracks)){
 				return;
 			}
@@ -1346,12 +1346,12 @@
 					checkTrack();
 				}
 			}
-		}
+		},
 		/*
 		 * loadedMetaData
 		 * 功能：视频播放对象video注册内部监听调用函数
 		*/
-		function loadedMetaData(){
+		loadedMetaData=function(){
 			eventTarget('loadedMetaData',{
 				width:CK.getWidth(),
 				height:CK.getHeight(),
@@ -1364,7 +1364,7 @@
 			replaceInformation('videoHeight',CT.videoHeight);
 			replaceInformation('volume',parseInt(CT.volume*100));
 			replaceInformation('duration',parseInt(duration));
-		}
+		};
 		/*
 		 * videoHandler
 		 * 功能：视频播放对象video注册内部监听调用函数
@@ -1827,7 +1827,7 @@
 		 * adFrontPlay
 		 * 功能：播放贴片广告
 		*/
-		function adFrontPlay(){
+		var adFrontPlay=function(){
 			if(ad['frontPlayI']==0){//如果是播放第一个广告，则显示相关组件
 				allBarHide(false);
 				C['ad'].show();
@@ -1873,12 +1873,12 @@
 					C['ad']['bottom']['details'].hide();
 				}
 			}
-		}
+		},
 		/*
 		 * adFrontCloseTime
 		 * 功能：播放贴片广告时按指定时间后显示关闭广告按钮
 		*/
-		function adFrontCloseTime(){
+		adFrontCloseTime=function(){
 			if(!isUndefined(ad['front']['closeSetTime'])){
 				clearTimeout(ad['front']['closeSetTime']);
 				ad['front']['closeSetTime']=null;
@@ -1892,12 +1892,12 @@
 				C['ad']['top']['closeAd'].show();
 				C['ad']['top']['closeTime'].hide();
 			}
-		}
+		},
 		/*
 		 * calculationAdFrontTime
 		 * 功能：计算贴片广告倒计时时间以及广告是视频时用于倒计时
 		*/
-		function calculationAdFrontTime(t){
+		calculationAdFrontTime=function(t){
 			if(!isUndefined(t)){
 				ad['front']['list'][ad['frontPlayI']]['time']=t;
 			}
@@ -1906,22 +1906,22 @@
 				ad['front']['countDown']+=parseInt(ad['front']['list'][i]['time']);
 			}
 			C['ad']['top']['countDown'].htm(ad['front']['countDown']+language['second']);
-		}
+		},
 		/*
 		 * clearAdFrontSetTime
 		 * 功能：关闭贴片广告倒计时的计时器
 		*/
-		function clearAdFrontSetTime(){
+		clearAdFrontSetTime=function(){
 			if(adFrontSetTime){
 				clearTimeout(adFrontSetTime);
 				adFrontSetTime=null;
 			}
-		}
+		},
 		/*
 		 * adFrontCountDown
 		 * 功能：贴片广告倒计时
 		*/
-		function adFrontCountDown(){
+		adFrontCountDown=function(){
 			clearAdFrontSetTime();
 			var adv=ad['front']['list'][ad['frontPlayI']];
 			if(adv['time']>0){
@@ -1933,12 +1933,12 @@
 			else{
 				adFrontEnded();
 			}
-		}
+		},
 		/*
 		 * adFrontEnded
 		 * 功能：贴片广告单个播放完成后进行判断是否需要播放下一个广告还是播放正片
 		*/
-		function adFrontEnded(){
+		adFrontEnded=function(){
 			if(ad['frontPlayI']<ad['front']['list'].length-1){
 				ad['frontPlayI']++;
 				adFrontPlay();
@@ -1964,12 +1964,12 @@
 				eventTarget('frontAdEnded',true);
 				frontAdPlay=false;//贴片广告播放状态
 			}
-		}
+		},
 		/*
 		 * adVideoPlay
 		 * 功能：贴片广告播放视频
 		*/
-		function adVideoPlay(vstr){
+		adVideoPlay=function(vstr){
 			if(isUndefined(vstr)) return;
 			C['ad']['picture'].hide();
 			seekTime=0;
@@ -2005,12 +2005,12 @@
 			ad['front']['video']=true;//设置包含视频广告
 			C['ad']['link'].show();
 			C['ad']['bottom']['mutedAndExit'].show();
-		}
+		},
 		/*
 		 * adPicturePlay
 		 * 功能：贴片广告播放图片
 		*/
-		function adPicturePlay(adv){
+		adPicturePlay=function(adv){
 			if(isUndefined(adv['file'])) return;
 			var img = null;
 			var imgloadNum=0;
@@ -2047,12 +2047,12 @@
 			calculationAdFrontTime();//计算时间
 			adFrontCountDown();//开启倒计时
 			C['ad']['bottom']['mutedAndExit'].hide();
-		}
+		},
 		/*
 		 * adNode
 		 * 功能：贴片广告播放外部节点
 		*/
-		function adNode(adv){
+		adNode=function(adv){
 			if(isUndefined(adv['content'])) return;
 			ad['front']['node']=player.layer(adv);
 			ad['front']['node'].css({'z-index':1});
@@ -2064,20 +2064,20 @@
 			calculationAdFrontTime();//计算时间
 			adFrontCountDown();//开启倒计时
 			C['ad']['bottom']['mutedAndExit'].hide();
-		}
+		},
 		/*
 		 * frontVideoClickHandler
 		 * 功能：视频广告上方层单击事件
 		*/
-		function frontVideoClickHandler(){
+		frontVideoClickHandler=function(){
 			var url=C['ad']['link'].attr('data-link');
 			window.open(url,'_blank');
-		}
+		},
 		/*
 		 * closeFrontAd
 		 * 功能：关闭贴片广告
 		*/
-		function closeFrontAd(){
+		closeFrontAd=function(){
 			if(!isUndefined(ad) && !isUndefined(ad['front']) && !isUndefined(ad['front']['closeButtonClick'])){
 				if(valType(ad['front']['closeButtonClick'])=='function'){
 					try{
@@ -2095,12 +2095,12 @@
 			else{
 				player.closeFrontAd();
 			}
-		}
+		},
 		/*
 		 * adPausePlay
 		 * 功能：播放暂停广告
 		*/
-		function adPausePlay(){
+		adPausePlay=function(){
 			closePauseAd();
 			if(!isUndefined(ad) && !isUndefined(ad['pause']) && !isUndefined(ad['pause']['list']) && ad['pause']['list'].length-1>=ad['pausePlayI']){
 				var adv=ad['pause']['list'][ad['pausePlayI']];
@@ -2174,12 +2174,12 @@
 					},adv['time']*1000)
 				}
 			}
-		}
+		},
 		/*
 		 * closePauseAd
 		 * 功能：关闭暂停广告
 		*/
-		function closePauseAd(){
+		closePauseAd=function(){
 			if(adPauseSetTime){
 				clearTimeout(adPauseSetTime);
 				adPauseSetTime=null;
@@ -2194,7 +2194,7 @@
 				player.closeLayer(ad['pause']['node']);
 				eventTarget('pauseAdClose');
 			}
-		}
+		};
 		/*
 		 * player
 		 * 功能:开放接口,向外部提供播放器的交互功能列表，包含获取，执行，监听这三种功能
@@ -3314,56 +3314,11 @@
 			}
 		};
 		/*
-		 * documentReady
-		 * 功能：判断页面加载完成
-		 * @fn：页面加载完成后执行的函数
-		*/
-		function documentReady(fn) {
-			var isReady = false;
-			var timer = null;
-			var doReady = function() {
-				if(timer) clearInterval(timer);
-				if(isReady) return;
-				isReady = true;
-				if(valType(fn) == 'function') {
-					fn();
-				}
-			};
-			var bodyLoad = function() {
-				timer = setInterval(function() {
-					try {
-						if(!isUndefined(document.readyState) && document.readyState == 'complete') {
-							doReady();
-						}
-					} catch(event) {};
-				}, 10);
-			};
-			var w3c = function() {
-				if(valType(fn) == 'function') {
-					fn();
-				}
-				removeListener(window, 'load', w3c);
-			};
-			if(!isUndefined($('body'))){
-				if(valType(fn) == 'function') {
-					fn();
-				}
-			}
-			else{
-				try {
-					addListener(window, 'load', w3c);
-				} catch(event) {
-					bodyLoad();
-				}
-			}
-			
-		}
-		/*
 		 * checkBar
 		 * 功能：完全获取vars值后判断控制栏上的按钮是否需要显示
 		 * 完全获取vars是指视频加载成功后
 		*/
-		function checkBar(){
+		var checkBar=function(){
 			//初始化判断
 			if(vars['autoplay']){
 				C['bar']['playAndPause']['play'].hide();
@@ -3430,12 +3385,12 @@
 			if(vars['volume']==0){
 				player.muted();
 			}
-		}
+		},
 		/*
 		 * loadLogo
 		 * 功能：加载logo
 		*/
-		function loadLogo(){
+		loadLogo=function(){
 			if(!isUndefined(vars['logo']) && isUndefined(C['logo'])){
 				C['logo']=createlDiv('ck-logo');
 				createlImg(vars['logo']).addListener('load',function(){
@@ -3443,12 +3398,12 @@
 					C['logo'].append(this);
 				}).addListener('error',function(){C['logo'].remove()});
 			}
-		}
+		},
 		/*
 		 * loadAbout
 		 * 功能：加载loadAbout
 		*/
-		function loadAbout(){
+		loadAbout=function(){
 			if(!isUndefined(vars['information']) && !isUndefined(C['about']) && valType(vars['information'])=='object'){
 				var obj=vars['information'];
 				var k='';
@@ -3471,12 +3426,12 @@
 				CM.append(C['about']['textareaEle']);
 				C['about']['textareaEle'].hide()
 			}
-		}
+		},
 		/*
 		 * loadMenu
 		 * 功能：加载右键
 		*/
-		function loadMenu(){
+		loadMenu=function(){
 			if(!isUndefined(vars['menu']) && vars['menu']){
 				rightMenu=vars['menu'];
 			}
@@ -3542,49 +3497,49 @@
 			};
 			C['menu'].mouseout(menuMouseOut);
 			C['menu'].mouseover(clearTime);
-		}
+		},
 		/*
 		 * aboutShow
 		 * 功能：显示关于视频
 		*/
-		function aboutShow(){
+		aboutShow=function(){
 			C['about'].show();
 			C['menu'].hide();
-		}
+		},
 		/*
 		 * aboutHide
 		 * 功能：显示关于视频
 		*/
-		function aboutHide(){
+		aboutHide=function(){
 			C['about'].hide();
-		}
+		},
 		/*
 		 * aboutCopy
 		 * 功能：拷贝关于视频内容
 		*/
-		function aboutCopy(){
+		aboutCopy=function(){
 			C['about']['textareaEle'].show();
 			C['about']['textareaEle'].select();
 			document.execCommand('Copy'); // 执行浏览器复制命令
 			C['about']['textareaEle'].hide();
 			message(language['copySucceeded'],true);
-		}
+		},
 		/*
 		 * getBarHeight
 		 * 功能：获取控制栏的高
 		*/
-		function getBarHeight(){
+		getBarHeight=function(){
 			var h=C['bar'].getHeight();
 			if(parseFloat(C['bar']['pbox'].css('top'))<0){
 				h-=parseInt(C['bar']['pbox'].css('top'));
 			}
 			return h;
-		}
+		},
 		/*
 		 * hideBar
 		 * 功能：隐藏控制栏，只在播放状态下有效
 		*/
-		function hideBar(){
+		hideBar=function(){
 			if(mouseSetTime){
 				clearTimeout(mouseSetTime);
 				mouseSetTime=null;
@@ -3605,22 +3560,22 @@
 				}
 				mouseSetTime=null;
 			},vars['barHideTime']);
-		}
+		},
 		/*
 		 * barMouseOut
 		 * 功能：鼠标离开控制栏修改播放进度框样式
 		*/
-		function barMouseOut(){
+		barMouseOut=function(){
 			if(!paused){
 				C['bar']['pbox'].addClass('ck-bar-progress-out');
 				hideBar();
 			}
-		}
+		},
 		/*
 		 * barMouseOver
 		 * 功能：鼠标经过控制栏修改播放进度框样式
 		*/
-		function barMouseOver(){
+		barMouseOver=function(){
 			if(!paused){
 				C['bar']['pbox'].removeClass('ck-bar-progress-out');
 				if(mouseSetTime){
@@ -3628,33 +3583,33 @@
 					mouseSetTime=null;
 				}
 			}
-		}
+		},
 		/*
 		 * rightBarMouseOut
 		 * 功能：鼠标离开右侧控制栏修改播放进度框样式
 		*/
-		function rightBarMouseOut(){
+		rightBarMouseOut=function(){
 			if(!paused){
 				hideBar();
 			}
-		}
+		},
 		/*
 		 * rightBarMouseOver
 		 * 功能：鼠标经过右侧控制栏修改播放进度框样式
 		*/
-		function rightBarMouseOver(){
+		rightBarMouseOver=function(){
 			if(!paused){
 				if(mouseSetTime){
 					clearTimeout(mouseSetTime);
 					mouseSetTime=null;
 				}
 			}
-		}
+		},
 		/*
 		 * checkPlaybackrate
 		 * 功能：初始化或重置倍速组件内容
 		*/
-		function checkPlaybackrate(){
+		checkPlaybackrate=function(){
 			var playbackrate=vars['playbackrateList'];
 			var pbr=vars['playbackrate'];
 			C['bar']['playbackrate']['bg']=createlDiv('ck-list-bg');
@@ -3693,22 +3648,22 @@
 				});
 				changePlaybackrateVal(pbr);
 			}
-		}
+		},
 		/*
 		 * playbackrateClick
 		 * 功能：选择播速
 		*/
-		function playbackrateClick(e){
+		playbackrateClick=function(e){
 			C['bar']['playbackrate']['bgbox'].hide();
 			setTimeout(function(){C['bar']['playbackrate']['bgbox'].removeCss('display');},300);
 			message(language['switchTo']+$(this).htm());
 			player.playbackRate(parseFloat($(this).attr('data-val')));
-		}
+		},
 		/*
 		 * changePlaybackrateVal
 		 * 功能：根据速度检查播速
 		*/
-		function changePlaybackrateVal(num){
+		changePlaybackrateVal=function(num){
 			C['bar']['playbackrate']['bg'].find('button').each(function(index,ele){
 				var val=parseFloat(ele.attr('data-val'));
 				ele.removeClass('ck-list-p-focus');
@@ -3725,12 +3680,12 @@
 					ele.removeClass('ck-list-p-focus');
 				}
 			});
-		}
+		},
 		/*
 		 * checkTrack
 		 * 功能：初始化或重置字幕组件内容
 		*/
-		function checkTrack(){
+		checkTrack=function(){
 			var track=vars['track'];
 			var pbr=-1;
 			C['bar']['track']['bgbox'].htm('');
@@ -3779,22 +3734,22 @@
 				});
 			});
 			changeTrackVal(pbr);
-		}
+		},
 		/*
 		 * trackClick
 		 * 功能：选择字幕
 		*/
-		function trackClick(e){
+		trackClick=function(e){
 			C['bar']['track']['bgbox'].hide();
 			setTimeout(function(){C['bar']['track']['bgbox'].removeCss('display');},300);
 			message(language['switchTo']+$(this).attr('data-title'));
 			player.track(parseFloat($(this).attr('data-i')));
-		}
+		},
 		/*
 		 * changeTrackVal
 		 * 功能：根据字幕检查
 		*/
-		function changeTrackVal(num){
+		changeTrackVal=function(num){
 			C['bar']['track']['bg'].find('button').each(function(index,ele){
 				var i=parseInt(ele.attr('data-i'));
 				if(num==i){
@@ -3813,12 +3768,12 @@
 					ele.removeClass('ck-list-p-focus');
 				}
 			});
-		}
+		},
 		/*
 		 * checkDefinition
 		 * 功能：初始化或重置清晰度组件内容
 		*/
-		function checkDefinition(){
+		checkDefinition=function(){
 			var pi=-1;
 			var videoUrl=video['currentSrc'];
 			if(!isUndefined(C['bar']['definition']['bg'])){
@@ -3875,23 +3830,23 @@
 					}
 				});
 			}
-		}
+		},
 		/*
 		 * definitionClick
 		 * 功能：选择清晰度
 		*/
-		function definitionClick(e){
+		definitionClick=function(e){
 			C['bar']['definition']['bgbox'].hide();
 			setTimeout(function(){
 				C['bar']['definition']['bgbox'].removeCss('display');
 			},300);
 			changeDefinition(parseInt($(this).attr('data-i')));
-		}
+		},
 		/*
 		 * changeDefinition
 		 * 功能：检查清晰度
 		*/
-		function changeDefinition(num){
+		changeDefinition=function(num){
 			C['bar']['definition']['bg'].find('button').each(function(index,ele){
 				var i=parseInt(ele.attr('data-i'));
 				if(num==i){
@@ -3912,12 +3867,12 @@
 					ele.removeClass('ck-list-p-focus');
 				}
 			});
-		}
+		},
 		/*
 		 * deletePrompt
 		 * 功能：删除关键点
 		*/
-		function deletePrompt(){
+		deletePrompt=function(){
 			var i=0;
 			if(!isUndefined(C['prompt']) && valType(C['prompt'])=='array'){
 				for(i=C['prompt'].length;i>-1;i--){
@@ -3928,12 +3883,12 @@
 				C['prompt']=null;
 			}
 			C['prompt']=[];
-		}
+		},
 		/*
 		 * changePrompt
 		 * 功能：构建关键点
 		*/
-		function changePrompt(){
+		changePrompt=function(){
 			deletePrompt();
 			for(var i=0;i<vars['prompt'].length;i++){
 				var obj=vars['prompt'][i];
@@ -3959,12 +3914,12 @@
 					C['prompt'].push(ele);
 				}
 			}
-		}
+		},
 		/*
 		 * showPromptWords
 		 * 功能：显示关键点提示
 		*/
-		function showPromptWords(ele){
+		showPromptWords=function(ele){
 			if(isUndefined(C['promptWords'])){
 				C['promptWords']=createlDiv('ck-prompt-words');
 				CM.append(C['promptWords']);
@@ -3999,12 +3954,12 @@
 				'top':top+'px',
 				'left':left+'px'
 			});
-		}
+		},
 		/*
 		 * changePreview
 		 * 功能：加载或重置预览图片
 		*/
-		function changePreview(preview){
+		changePreview=function(preview){
 			if(!isUndefined(C['preview'])){
 				C['preview'].remove();
 				C['preview']=null;
@@ -4085,12 +4040,12 @@
 					C['preview']=null;
 				}
 			}
-		}
+		},
 		/*
 		 * showPreview
 		 * 功能：显示预览图
 		*/
-		function showPreview(time){
+		showPreview=function(time){
 			if(hidePreviewSetTime){
 				clearTimeout(hidePreviewSetTime);
 				hidePreviewSetTime=null;
@@ -4177,12 +4132,12 @@
 					});
 				}
 			}
-		}
+		},
 		/*
 		 * showError
 		 * 功能：显示错误信息
 		*/
-		function showError(){
+		showError=function(){
 			C['loading'].hide();
 			if(vars['controls']){
 				return;
@@ -4196,20 +4151,20 @@
 			var html=msg+'(code:'+CT.error['code']+')';
 			C['error'].htm(html);
 			C['error'].show();
-		}
+		},
 		/*
 		 * showWindowsError
 		 * 功能：显示错误信息
 		*/
-		function showWindowsError(error){
+		showWindowsError=function(error){
 			var ele=createlDiv('ckplayer-error',error);
 			$('body').append(ele);
-		}
+		},
 		/*
 		 * showNextEpisode
 		 * 功能：鼠标经过下一集按钮的动作
 		*/
-		function showNextEpisode(){
+		showNextEpisode=function(){
 			if(isUndefined(vars['next'])) return;
 			if(valType(vars['next'])=='object'){
 				if('content' in vars['next']){
@@ -4222,23 +4177,23 @@
 				}
 			}
 			tip(C['bar']['nextEpisode'],language['next']);
-		}
+		},
 		/*
 		 * nextClick
 		 * 功能：点击下一集按钮的动作
 		*/
-		function nextClick(){
+		nextClick=function(){
 			if(valType(vars['next'])=='object'){
 				if('link' in vars['next']){
 					window.location.href=vars['next']['link'];
 				}
 			}
-		}
+		},
 		/*
 		 * showEnded
 		 * 功能：播放结束后的显示内容
 		*/
-		function showEnded() {
+		showEnded=function() {
 			if(!CT.loop && !isUndefined(vars['ended'])){
 				closePauseAd();
 				C['ended']=player.layer(vars['ended']);
@@ -4247,12 +4202,12 @@
 				}
 				return;
 			}
-		}
+		},
 		/*
 		 * windowScroll
 		 * 功能：监听页面滚动
 		*/
-		function windowScroll() {
+		windowScroll=function() {
 			if(!CT.smallWindows) return;
 			if(CT.webFull || CT.theatre || CT.full){
 				exitSmallWindows();
@@ -4274,12 +4229,12 @@
 			else{
 				exitSmallWindows();
 			}
-		}
+		},
 		/*
 		 * exitSmallWindows
 		 * 退出小窗口模式
 		 */
-		function exitSmallWindows(){
+		exitSmallWindows=function(){
 			if(CK.hasClass('ckplayer-ckplayer-smallwindow')){
 				CK.removeClass('ckplayer-ckplayer-smallwindow');
 				if(vars['smallWindowsDrag']){
@@ -4290,13 +4245,13 @@
 				allBarShow();
 				checkVideoRotate();
 			}
-		}
+		},
 		/*
 		 * drag
 		 * 功能，使节点可拖动
 		 * state：是否开启可拖动，默认=false，关闭状态
 		*/
-		function drag(state) {
+		drag=function(state) {
 			var doc=$(document);
 			var posX = 0,posY = 0,
 				posXRecord = 0,posYRecord = 0;
@@ -4350,12 +4305,12 @@
 			else{
 				CK.unbind('mousedown');
 			}
-		};
+		},
 		/*
 		 * checkVideoRotate
 		 * 检查播放器尺寸
 		 */
-		function checkVideoRotate(){
+		checkVideoRotate=function(){
 			var ckW=CK.getWidth()*nowZoom*0.01,ckH=CK.getHeight()*nowZoom*0.01;
 			var vW=CV.getWidth(),vH=CV.getHeight();
 			CV.css({
@@ -4420,12 +4375,12 @@
 					});
 				}
 			}
-		}
+		},
 		/*
 		 * allBarShow
 		 * 功能：控制栏显示
 		*/
-		function allBarShow(){
+		allBarShow=function(){
 			if(barShow){
 				C['bar'].show();
 				C['topBar'].show();
@@ -4438,12 +4393,12 @@
 			if(!isUndefined(C['logo'])){
 				C['logo'].show();
 			}
-		}
+		},
 		/*
 		 * allBarHide
 		 * 功能：控制栏隐藏
 		*/
-		function allBarHide(tempTime){
+		allBarHide=function(tempTime){
 			if(isUndefined(tempTime)){
 				tempTime=true;
 			}
@@ -4456,12 +4411,12 @@
 			if(!isUndefined(C['logo'])){
 				C['logo'].hide();
 			}
-		}
+		},
 		/*
 		 * message
 		 * 功能：显示提示
 		*/
-		function message(str,right){
+		message=function(str,right){
 			C['message'].htm('');
 			if(str){
 				C['message'].htm(str);
@@ -4488,13 +4443,13 @@
 				C['message'].removeClass('ck-message-right').removeClass('ck-animate-bouncein').removeClass('ck-animate');
 				C['message'].hide();
 			}
-		}
+		},
 		/*
 		 * tip
 		 * 功能：显示Tip
 		 * @ele：需要显示提示的对象，@str：提示文字，@cl：水平修正距离，@align：对齐方式，只有两种，一种默认对齐（箭头在提示文字下方），一种是左对齐（箭头在提示文字右边）
 		*/
-		function tip(ele,str,cl,align){
+		tip=function(ele,str,cl,align){
 			C['tip']['content'].htm('');
 			if(str){
 				C['tip']['content'].htm(str);
@@ -4540,12 +4495,12 @@
 				C['tip'].removeClass('ck-animate');
 				C['tip'].removeClass('ck-animate-bouncein');
 			}
-		}
+		},
 		/*
 		 * tipResize
 		 * 功能：设置tip坐标
 		*/
-		function tipResize(ele,cl,align){
+		tipResize=function(ele,cl,align){
 			var offset=ele.offset();
 			var ckOffset=CK.offset();
 			var w=C['tip'].getWidth(),h=C['tip'].getHeight();
@@ -4583,12 +4538,12 @@
 				'left':left+'px',
 				'top':top-parseInt(C['tip'].css('margin-bottom'))+'px'
 			});
-		}
+		},
 		/*
 		 * progressDragX
 		 * 功能：制作进度调节框事件
 		*/
-		function progressDragX(){
+		progressDragX=function(){
 			var bg=C['bar']['pbox']['bg'],
 			play=C['bar']['pbox']['play'],
 			slider=C['bar']['pbox']['slider'],
@@ -4835,12 +4790,12 @@
 			bg.mousemove(bgMouseMove);
 			bg.mouseout(bgMouseOut);
 			mouseLine.mouseover(clearTime);
-		};
+		},
 		/*
 		 * volumeDragY
 		 * 功能：制作音量调节框事件
 		*/
-		 function volumeDragY() {
+		volumeDragY=function() {
 			var box=C['bar']['vbox']['volume']['box'],
 				bg=C['bar']['vbox']['volume']['bg'],
 				pp=C['bar']['vbox']['volume']['pp'],
@@ -4910,12 +4865,12 @@
 				player.volume(vol);
 			};
 			bg.mousedown(bgMouseDown);
-		};
+		},
 		/*
 		 * changeProgress
 		 * 功能：根据时间调节播放进度
 		*/
-		function changeProgress(time){
+		changeProgress=function(time){
 			if((valType(vars['live'])=='boolean' && vars['live'])){
 				return;
 			}
@@ -4938,12 +4893,12 @@
 				C['bar']['pbox']['slider'].css({'left':sliderLeft+'%'});
 				checkProgressSlider();
 			}		
-		};
+		},
 		/*
 		 * checkProgressSlider
 		 * 功能：检查设置播放进度条位置
 		 */
-		function checkProgressSlider(){
+		checkProgressSlider=function(){
 			var bg=C['bar']['pbox']['bg'],slider=C['bar']['pbox']['slider'];
 			var st=0;
 			if(C['bar']['pbox'].css('transition-duration')){
@@ -4961,20 +4916,20 @@
 				}
 			};
 			setTimeout(checkThis,st);		
-		};
+		},
 		/*
 		 * changeTopTime
 		 * 功能：修改顶部右侧时间
 		*/
-		function changeTopTime(){
+		changeTopTime=function(){
 			C['topBar']['timeEle'].htm(date('H:i:s'));
 			setTimeout(changeTopTime,1000);
-		}
+		},
 		/*
 		 * changeVolumeSlider
 		 * 功能：根据音量改变滑块位置
 		*/
-		function changeVolumeSlider(vol){
+		changeVolumeSlider=function(vol){
 			if(!isUndefined(C['bar']['vbox'])){
 				var box=C['bar']['vbox']['volume']['box'],
 				bg=C['bar']['vbox']['volume']['bg'],
@@ -4993,12 +4948,12 @@
 					});
 				}
 			}
-		};
+		},
 		/*
 		 * changeLoad
 		 * 功能：获取视频已加载部分并修改加载进度栏
 		*/
-		function changeLoad(){
+		changeLoad=function(){
 			if(video){
 				var len = video.buffered.length;
 				if(len>0){
@@ -5010,12 +4965,12 @@
 					C['bar']['pbox']['load'].css('width',(loadTime/duration)*100+'%');
 				}
 			}
-		};
+		},
 		/*
 		 * changeMuted
 		 * 功能：修改静音和取消静音时按钮切换事件
 		*/
-		function changeMuted(b){
+		changeMuted=function(b){
 			if(b){
 				C['bar']['vbox']['muted'].hide();
 				C['bar']['vbox']['exitMuted'].show();
@@ -5029,12 +4984,12 @@
 				C['ad']['bottom']['mutedAndExit']['muted'].show();
 				C['ad']['bottom']['mutedAndExit']['exitMuted'].hide()
 			}
-		}
+		},
 		/*
 		 * replaceInformation
 		 * 功能：替换关于里的内容
 		*/
-		function replaceInformation(o , n){
+		replaceInformation=function(o , n){
 			if(isUndefined(C['about']['sourceData']) && !isUndefined(C['about'].find('ul'))){
 				C['about']['sourceData']=C['about'].find('ul').eq(0).htm();
 				C['about']['objData']={};
@@ -5069,12 +5024,12 @@
 				C['about']['objData'][o]=n;
 				return C['about'].find('ul').eq(0).htm(htm);
 			}
-		}
+		},
 		/*
 		 * calculationFps
 		 * 功能：获取fps
 		*/
-		function calculationFps() {
+		calculationFps=function() {
 			var requestAnimationFrame =
 				window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -5109,12 +5064,12 @@
 				CT.fps=0;
 			}
 			step();
-		}
+		},
 		/*
 		 * getElement
 		 * 功能：获取一个外部节点
 		*/
-		function getElement(content){
+		getElement=function(content){
 			var ele=$(content);
 			if(isUndefined(ele)) return;
 			if(valType(ele)=='htmlarray'){
@@ -5126,12 +5081,12 @@
 				ele.nextElement=ele.next();
 			}		
 			return ele;
-		}
+		},
 		/*
 		 * $
 		 * 功能：根据ID或className或节点节点名称获取对象
 		*/
-		function $(obj, eL) {
+		$=function(obj, eL) {
 			var parent = null;
 			if (document) {
 				parent = document;
@@ -6105,12 +6060,12 @@
 	
 			}
 			return res;
-		}
+		},
 		/*
 		 * createlDiv
 		 * 功能：新建一个DIV节点
 		*/
-		function createlDiv(className,html) {
+		createlDiv=function(className,html) {
 			var ele = document.createElement('div');
 			var eleObject = $(ele);
 			if (className) {
@@ -6120,21 +6075,21 @@
 				eleObject.htm(html);
 			}
 			return eleObject;
-		}
+		},
 		/*
 		 * createlVideo
 		 * 功能：新建一个video节点
 		*/
-		function createlVideo() {
+		createlVideo=function() {
 			var ele = document.createElement('video');
 			var eleObject = $(ele);
 			return eleObject;
-		};
+		},
 		/*
 		 * createlButton
 		 * 功能新建一个button节点
 		*/
-		function createlButton(className,html) {
+		createlButton=function(className,html) {
 			var ele = document.createElement('button'); 
 			var eleObject = $(ele);
 			eleObject.attr('type','button');
@@ -6145,12 +6100,12 @@
 				eleObject.htm(html);
 			}
 			return eleObject;
-		}
+		},
 		/*
 		 * createlA
 		 * 功能新建一个a节点
 		*/
-		function createlA(html,href,className) {
+		createlA=function(html,href,className) {
 			var ele = document.createElement('a'); 
 			var eleObject = $(ele);
 			if(html){
@@ -6164,12 +6119,12 @@
 				eleObject.addClass(className);
 			}
 			return eleObject;
-		}
+		},
 		/*
 		 * createlJsLink
 		 * 功能新建一个a节点
 		*/
-		function createlJsLink(html,js) {
+		createlJsLink=function(html,js) {
 			var ele = document.createElement('a'); 
 			var eleObject = $(ele);
 			if(html){
@@ -6182,12 +6137,12 @@
 				eleObject.attr('href','javascript:;');
 			}
 			return eleObject;
-		}
+		},
 		/*
 		 * createlImg
 		 * 功能新建一个img节点
 		*/
-		function createlImg(file,className) {
+		createlImg=function(file,className) {
 			var ele = document.createElement('img'); 
 			var eleObject = $(ele);
 			if (className) {
@@ -6197,12 +6152,12 @@
 				ele.src=file;
 			}
 			return eleObject;
-		}
+		},
 		/*
 		 * getClient
 		 * 功能：获取clientX和clientY
 		*/
-		function getClient(event) {
+		getClient=function(event) {
 			var eve = event || window.event;
 			if (isUndefined(eve)) {
 				eve = {
@@ -6228,491 +6183,38 @@
 				x: x,
 				y: y
 			}
-		}
-		/*
-		 * getMaxZIndex
-		 * 功能：获取当前页面最大深度
-		*/
-		function getMaxZIndex() {
-			var arr = document.all || document.querySelectorAll('*');
-			var maxZ = -1;
-			for (var i = 0; i < arr.length; i++) {
-				var temp = null;
-				try {
-					temp = window.getComputedStyle(arr[i], null).zIndex;
-				} catch (event) {
-					if (arr[i].style) {
-						temp = arr[i].style.zIndex;
-					}
-				}
-				if (temp != 'auto' && parseInt(temp) > maxZ) {
-					maxZ = parseInt(temp);
-				}
-			}
-			return maxZ;
-		}
-		/*
-		 * getWindowSize
-		 * 功能：获取window的宽和高
-		*/
-		function getWindowSize() {
-			return {
-				width: window.innerWidth,
-				height: window.innerHeight
-			};
-		}
-		/*
-		 * standardization
-		 * 功能：将对象Object标准化，将n对象替换进o对象
-		 * @o:标准化对象，@n：外部传递对象
-		*/
-		function standardization(o, n) { //n替换进o
-			var h = {};
-			var k;
-			for (k in o) {
-				h[k] = o[k];
-			}
-			for (k in n) {
-				if(k in h){
-					h[k] = n[k];
-				}
-			}
-			return h;
-		}
-		/*
-		 * mergeObj
-		 * 功能：将新对象合并到原对象中，需要确保原对像里有对应的值并且类型一样
-		 * @o:原对象，@n：新对象
-		*/
-		function mergeObj(o,n){
-			var h = {};
-			var k;
-			for (k in o) {
-				h[k] = o[k];
-			}
-			for (k in n) {
-				if(k in h){
-					switch(valType(h[k])){
-						case 'object':
-							if(valType(n[k])=='object'){
-								h[k] = mergeObj(h[k],n[k]);
-							}
-							break;
-						default:
-							if(valType(h[k])==valType(n[k])){
-								h[k] = n[k];
-							}
-							break;
-					}
-				}
-			}
-			return h;
-		}
-		/*
-		 * valType
-		 * 功能：判断变量类型
-		*/
-		function valType(val) {
-			if(typeof val==='undefined') return 'undefined';
-			var str=Object.prototype.toString.call(val).split(' ')[1].replace(']','').toLowerCase();
-			if(str.substr(0,4)=='html' && (str.substr(-7)=='element' || str.substr(-8)=='document' || str=='window')){
-				str='htmlobject';
-			}
-			if(str=='htmlcollection' || str=='nodelist'){
-				str='htmlarray';
-			}
-			return str;
-		}
-		/*
-		 * isUndefined
-		 * 功能：判断变量是否存在或值是否为undefined
-		*/
-		function isUndefined(val) {
-			try {
-				return valType(val)==='undefined' || val === undefined || val === null || (valType(val)==='number' && isNaN(val));
-			} catch (event) {
-				return true;
-			}
-			return false;
-		}
-		/*
-		 * prev
-		 * 功能：获取指定节点前一个同胞节点
-		 * @ele：要获取的节点
-		*/
-		function prev(ele) {
-			var e = ele.previousSibling;
-			if (e == null) { //测试同胞节点是否存在，否则返回空
-				return null;
-			}
-			if (e.nodeType == 3) { //如果同胞节点为文本节点
-				var t = prev(e);
-				if (t && t.nodeType == 1) {
-					return t;
-				}
-			} else {
-				if (e.nodeType == 1) { //确认节点为节点节点才返回
-					return e;
-				} else {
-					return false;
-				}
-			}
-		}
-		/*
-		 * next
-		 * 功能：获取指定节点下一个同胞节点
-		 * @ele：要获取的节点
-		*/
-		function next(ele) {
-			var e = ele.nextSibling;
-			if (e == null) { //测试同胞节点是否存在，否则返回空
-				return null;
-			}
-			if (e.nodeType == 3) { //如果同胞节点为文本节点
-				var t = next(e);
-				if (t && t.nodeType == 1) {
-					return t;
-				}
-			} else {
-				if (e.nodeType == 1) { //确认节点为节点才返回
-					return e;
-				} else {
-					return false;
-				}
-			}
-		}
-		/*
-		 * addListener
-		 * 功能：事件监听
-		 * @ele：监听对象，@e：事件名称，@f：返回事件函数
-		*/
-		function addListener(ele, e, f, t) {
-			if (isUndefined(t)) {
-				t = false;
-			}
-			if (ele.addEventListener) {
-				try {
-					ele.addEventListener(e, f, t);
-				} catch (event) {}
-			} else if (ele.attachEvent) {
-				try {
-					ele.attachEvent('on' + e, f);
-				} catch (event) {}
-			} else {
-				ele['on' + e] = f;
-			}
-			if(isUndefined(ele.listenerList)){
-				ele.listenerList=[];
-			}
-			ele.listenerList.push([e,f]);
-			return ele;
-		};
-		/*
-		 * removeListener
-		 * 功能：删除事件监听
-		 * @ele：监听对象，@e：事件名称，@f：返回事件函数
-		*/
-		function removeListener(ele, e, f, t) {
-			if (isUndefined(t)) {
-				t = false;
-			}
-			if (ele.removeEventListener) {
-				try {
-					ele.removeEventListener(e, f, t);
-				} catch (e) {}
-			} else if (ele.detachEvent) {
-				try {
-					ele.detachEvent('on' + e, f);
-				} catch (e) {}
-			} else {
-				ele['on' + e] = null;
-			}
-			if(!isUndefined(ele.listenerList)){
-				var temp=[];
-				for(var i=0;i<ele.listenerList.length;i++){
-					if(ele.listenerList[i][0]!=e || ele.listenerList[i][1]!=f){
-						temp.push(ele.listenerList[i]);
-					}
-				}
-				ele.listenerList=temp;
-			}
-			return ele;
-		}
-		/*
-		 * formatSeconds
-		 * 功能：將秒转化成时分秒
-		*/
-		function formatSeconds(val) {
-			if(isUndefined(val)) val=0;
-			var result = parseInt(val);
-			if(isUndefined(result)) result=0;
-			if(result<0) result=0;
-			var h = Math.floor(result / 3600) < 10 ? '0' + Math.floor(result / 3600) : Math.floor(result / 3600),
-			m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60)),
-			s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60)),
-			res = '';
-			if(h !== '00') res += h+':';
-			res += m+':'+s;
-			return res;
-		}
+		},
 		/*
 		 * getLiveTime
 		 * 功能：获取直播回放时间
 		*/
-		function getLiveTime(){
+		getLiveTime=function(){
 			var notTime=Date.now();
 			var varsTime=vars['live'];
 			if(varsTime.toString().length<13){
 				varsTime=varsTime*1000;
 			}
 			return notTime-varsTime;
-		}
+		},
 		/*
 		 * formatLiveTime
 		 * 功能：将直播的时间戳格式化成标准时间
 		*/
-		function formatLiveTime(time){
+		formatLiveTime=function(time){
 			var varsTime=vars['live'];
 			if(varsTime.toString().length<13){
 				varsTime=varsTime*1000;
 			}
 			varsTime+=time;
 			return language['lookBack']+date('H:i:s',varsTime);
-		}
-		/*
-		 * date
-		 * 功能：格式化的时间字符串
-		*/
-		function date(format, timestamp) {
-			if(isUndefined(timestamp)){
-				timestamp=new Date();
-			}
-			if(timestamp.toString().length<13) timestamp=timestamp*1000;
-			var a, jsdate = ((timestamp) ? new Date(timestamp) : new Date());
-			var pad = function(n, c) {
-				if((n = n + '').length < c) {
-					return new Array(++c - n.length).join('0') + n;
-				} else {
-					return n;
-				}
-			};
-			var txt_weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-			var txt_ordin = {
-				1: 'st',
-				2: 'nd',
-				3: 'rd',
-				21: 'st',
-				22: 'nd',
-				23: 'rd',
-				31: 'st'
-			};
-			var txt_months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			var f = {
-				// Day 
-				d: function() {
-					return pad(f.j(), 2)
-				},
-				D: function() {
-					return f.l().substr(0, 3)
-				},
-				j: function() {
-					return jsdate.getDate()
-				},
-				l: function() {
-					return txt_weekdays[f.w()]
-				},
-				N: function() {
-					return f.w() + 1
-				},
-				S: function() {
-					return txt_ordin[f.j()] ? txt_ordin[f.j()] : 'th'
-				},
-				w: function() {
-					return jsdate.getDay()
-				},
-				z: function() {
-					return(jsdate - new Date(jsdate.getFullYear() + '/1/1')) / 864e5 >> 0
-				},
-		
-				// Week 
-				W: function() {
-					var a = f.z(),
-						b = 364 + f.L() - a;
-					var nd2, nd = (new Date(jsdate.getFullYear() + '/1/1').getDay() || 7) - 1;
-					if(b <= 2 && ((jsdate.getDay() || 7) - 1) <= 2 - b) {
-						return 1;
-					} else {
-						if(a <= 2 && nd >= 4 && a >= (6 - nd)) {
-							nd2 = new Date(jsdate.getFullYear() - 1 + '/12/31');
-							return date('W', Math.round(nd2.getTime() / 1000));
-						} else {
-							return(1 + (nd <= 3 ? ((a + nd) / 7) : (a - (7 - nd)) / 7) >> 0);
-						}
-					}
-				},
-		
-				// Month 
-				F: function() {
-					return txt_months[f.n()]
-				},
-				m: function() {
-					return pad(f.n(), 2)
-				},
-				M: function() {
-					return f.F().substr(0, 3)
-				},
-				n: function() {
-					return jsdate.getMonth() + 1
-				},
-				t: function() {
-					var n;
-					if((n = jsdate.getMonth() + 1) == 2) {
-						return 28 + f.L();
-					} else {
-						if(n & 1 && n < 8 || !(n & 1) && n > 7) {
-							return 31;
-						} else {
-							return 30;
-						}
-					}
-				},
-		
-				// Year 
-				L: function() {
-					var y = f.Y();
-					return(!(y & 3) && (y % 1e2 || !(y % 4e2))) ? 1 : 0
-				},
-				//o not supported yet 
-				Y: function() {
-					return jsdate.getFullYear()
-				},
-				y: function() {
-					return(jsdate.getFullYear() + '').slice(2)
-				},
-		
-				// Time 
-				a: function() {
-					return jsdate.getHours() > 11 ? 'pm' : 'am'
-				},
-				A: function() {
-					return f.a().toUpperCase()
-				},
-				B: function() {
-					// peter paul koch: 
-					var off = (jsdate.getTimezoneOffset() + 60) * 60;
-					var theSeconds = (jsdate.getHours() * 3600) + (jsdate.getMinutes() * 60) + jsdate.getSeconds() + off;
-					var beat = Math.floor(theSeconds / 86.4);
-					if(beat > 1000) beat -= 1000;
-					if(beat < 0) beat += 1000;
-					if((String(beat)).length == 1) beat = '00' + beat;
-					if((String(beat)).length == 2) beat = '0' + beat;
-					return beat;
-				},
-				g: function() {
-					return jsdate.getHours() % 12 || 12
-				},
-				G: function() {
-					return jsdate.getHours()
-				},
-				h: function() {
-					return pad(f.g(), 2)
-				},
-				H: function() {
-					return pad(jsdate.getHours(), 2)
-				},
-				i: function() {
-					return pad(jsdate.getMinutes(), 2)
-				},
-				s: function() {
-					return pad(jsdate.getSeconds(), 2)
-				},
-				//u not supported yet 
-		
-				// Timezone 
-				//e not supported yet 
-				//I not supported yet 
-				O: function() {
-					var t = pad(Math.abs(jsdate.getTimezoneOffset() / 60 * 100), 4);
-					if(jsdate.getTimezoneOffset() > 0) t = '-' + t;
-					else t = '+' + t;
-					return t;
-				},
-				P: function() {
-					var O = f.O();
-					return(O.substr(0, 3) + ':' + O.substr(3, 2))
-				},
-				//T not supported yet 
-				//Z not supported yet 
-		
-				// Full Date/Time 
-				c: function() {
-					return f.Y() + '-' + f.m() + '-' + f.d() + 'T' + f.h() + ':' + f.i() + ':' + f.s() + f.P()
-				},
-				//r not supported yet 
-				U: function() {
-					return Math.round(jsdate.getTime() / 1000)
-				}
-			};
-		
-			return format.replace(/([a-zA-Z])/g,function(t, s) {
-				var ret='';
-				if(t != s) {
-					// escaped 
-					ret = s;
-				} else if(f[s]) {
-					// a date function exists 
-					ret = f[s]();
-				} else {
-					// nothing special 
-					ret = s;
-				}
-				return ret;
-			});
-		}
-		
-		/*
-		 * getPath
-		 * 功能：获取该js文件所在路径
-		*/
-		function getPath(siz) {
-			var scriptList = document.scripts,
-				thisPath = scriptList[scriptList.length - 1].src;
-			for (var i = 0; i < scriptList.length; i++) {
-				var scriptName = scriptList[i].getAttribute('name') || scriptList[i].getAttribute('data-name');
-				var src = scriptList[i].src.slice(scriptList[i].src.lastIndexOf('/') + 1, scriptList[i].src.lastIndexOf('.'));
-				if ((scriptName && (scriptName == 'ckplayer' || scriptName == 'ckplayer.min')) || (scriptList[i].src && (src == 'ckplayer' || src == 'ckplayer.min'))) {
-					thisPath = scriptList[i].src;
-					break;
-				}
-			}
-			var path=thisPath.substring(0, thisPath.lastIndexOf('/js/') + 1);
-			if(!isUndefined(siz)){
-				path+=siz+'/';
-			}
-			return path;
-		}
-		
-		/*
-		 * checkJs
-		 * 功能：判断js是否已加载
-		 * @file：js文件路径
-		*/
-		function checkJs(file) {
-			var scriptList = document.scripts;
-			for (var i = 0; i < scriptList.length; i++) {
-				if(scriptList[i].src==file){
-					return scriptList[i];
-				}
-			}
-			return false;
-		}
+		},
 		/*
 		 * loadJs
 		 * 功能：加载js文件并在加载完成后执行callback函数
 		 * @file：js文件地址
 		 * @callback：加载完成后执行的函数
 		*/
-		function loadJs(file, callback) {
+		loadJs=function(file, callback) {
 			var fn =function() {};
 			if(!isUndefined(callback)){
 				fn=callback;
@@ -6766,170 +6268,14 @@
 			}
 			script.src = file;
 			$('head').eq(0).append(script);
-		}
-		/*
-		 * ajax
-		 * 功能：ajax功能
-		 * @cObj:传递的参数，包含请求地址，请求类型，编码等
-		*/
-		function ajax(cObj) {
-			var callback = null;
-			var obj = {
-				method: 'get',//请求类型
-				dataType: 'json',//请求的数据类型
-				charset: 'utf-8',
-				async: true,//true表示异步，false表示同步
-				url: '',
-				data: null,
-				success: null,
-				error:null
-			};
-			obj = standardization(obj, cObj);
-			if (isUndefined(obj['url'])) {
-				return;
-			}
-			/*
-			 * errorFun
-			 *功能：执行error
-			*/
-			var errorFun=function(info){
-				if(!isUndefined(obj['error']) && valType(obj['error'])=='function'){
-					obj['error'](info);
-				}
-				else{
-					obj['success'](null);
-				}
-			};
-			/*
-			 * successFun
-			 *功能：执行success
-			*/
-			var successFun=function(success){
-				if(!isUndefined(obj['success']) && valType(obj['success'])=='function'){
-					obj['success'](success);
-				}
-			};
-			/*
-			 * createXHR
-			 *功能：用来为ajax函数提供支持
-			*/
-			var createXHR=function() {
-				if (window.XMLHttpRequest) {
-					return new XMLHttpRequest();
-				} else if (window.ActiveXObject) {
-					try {
-						return new ActiveXObject('Microsoft.XMLHTTP');
-					} catch(event) {
-						try {
-							return new ActiveXObject('Msxml2.XMLHTTP');
-						} catch(event) {}
-					}
-				}
-			};
-			/*
-			 * formatParams
-			 * 功能：将对象转成地址字符串，为ajax函数提供支持
-			 * @obj：传递一个对象
-			*/
-			var formatParams=function(obj) {
-				var arr = [];
-				for (var key in obj) {
-					arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
-				}
-				return arr.join('&');
-			};
-			if (valType(cObj) != 'object') {
-				if(!isUndefined(obj['error'])){
-					obj.error(event);
-				}
-				return;
-			}
-			
-			if (obj.dataType === 'json' || obj.dataType === 'text' || obj.dataType === 'html' || obj.dataType === 'xml') {
-				var xhr = createXHR();
-				callback = function() {
-					//判断http的交互是否成功
-					if (xhr.status === 200) {
-						if (obj.dataType === 'json') {
-							try {
-								successFun(eval('(' + xhr.responseText + ')')); //回调传递参数
-							}
-							catch(event) {
-								successFun(null);
-							}
-						} else {
-							successFun(xhr.responseText); //回调传递参数
-						}
-					} 
-					else {
-						errorFun({code:xhr.status,message:xhr.statusText});
-					}
-				};
-				obj.data = formatParams(obj.data); //通过params()将名值对转换成字符串
-				if (obj.method === 'get' && !isUndefined(obj.data)) {
-					if (obj.data != '') {
-						if (obj.url.indexOf('?') == -1) {
-							obj.url += '?' + obj.data
-						} else {
-							obj.url += '&' + obj.data;
-						}
-					}
-				}
-				if (obj.async === true) { //true表示异步，false表示同步
-					addListener(xhr,'readystatechange',function(event){
-						if (this.readyState === 4 && callback != null) { //判断对象的状态是否交互完成
-							callback(); //回调
-						}
-					});
-				}
-				xhr.open(obj.method, obj.url, obj.async);
-				if (obj.method === 'post') {
-					try{
-						xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-						xhr.setRequestHeader('charset', obj['charset']);
-						xhr.send(obj.data);
-					}
-					catch(event){
-						callback();
-					}
-				}
-				else {
-					try{
-						xhr.send(null); //get方式则填null
-					}
-					catch(event){
-						callback();
-					}
-				}
-				if (obj.async === false) { //同步
-					callback();
-				}
+		},
 	
-			}
-			else if (obj.dataType === 'jsonp') {
-				var oHead = document.getElementsByTagName('head')[0];
-				var oScript = document.createElement('script');
-				var callbackName = 'callback' + new Date().getTime();
-				var params = formatParams(obj.data) + '&callback=' + callbackName; //按时间戳拼接字符串
-				//拼接好src
-				oScript.src = obj.url.split('?') + '?' + params;
-				//插入script标签
-				oHead.insertBefore(oScript, oHead.firstChild);
-				//jsonp的回调函数
-				window[callbackName] = function(json) {
-					if(!isUndefined(obj['success']) && valType(obj['success'])==='function'){
-						obj['success'](json);
-					}
-					oHead.removeChild(oScript);
-				};
-			}
-		}
 		/*
 		 * doubleClickEvent
 		 * 功能：注册对象双击功能
 		 * @ele：注册对象，可以是页面中的任意节点，不支持数组形式
 		*/
-		function doubleClickEvent(ele){
+		doubleClickEvent=function(ele){
 			var setTime=null;//注册延时函数
 			var clickTime=0;//记录点击时间
 			ele=$(ele);
@@ -6967,63 +6313,716 @@
 					}
 				}
 			});
-		}
-		/*
-		 * dataURLtoBlob
-		 * 功能，base64转blob
-		 */
-		function dataURLtoBlob(dataurl) {
-			var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-			while (n--) {
-				u8arr[n] = bstr.charCodeAt(n);
-			}
-			return new Blob([u8arr], { type: mime });
-		}
-		/*
-		 * decodeURIString
-		 * 功能，解码中文
-		 */
-		function decodeURIString(obj){
-			for(var k in obj){
-				if(valType(obj[k])=='string' && obj[k]){
-					try{
-						obj[k]=decodeURI(obj[k]);
-					}
-					catch(event){}
-				}
-				if(valType(obj[k])=='object'){
-					obj[k]=decodeURIString(obj[k]);
-				}
-			}
-			return obj;
-		}
-		/*
-		 * bodyScroll
-		 * 功能，禁止页面滚动操作
-		 */
-		function bodyScroll(event){
-			event.preventDefault();
-		}
+		},
 		/*
 		 * noScrolling
 		 * 功能，禁止页面滚动操作
 		 */
-		function noScrolling(b){
+		noScrolling=function(b){
 			if(isUndefined(b)) b=false;
+			var bodyScroll=function (event){
+				event.preventDefault();
+			};
 		    if(b){ //禁止滚动
 		        $('body').addListener('touchmove', bodyScroll, {passive: false });
 		    }
 		    else{ //开启滚动
 		        $('body').removeListener('touchmove',bodyScroll, {passive: false});
 		    }
+		};
+		return into(videoObj);
+	}
+	/*
+	 * ajax
+	 * 功能：ajax功能
+	 * @cObj:传递的参数，包含请求地址，请求类型，编码等
+	*/
+	function ajax(cObj) {
+		var callback = null;
+		var obj = {
+			method: 'get',//请求类型
+			dataType: 'json',//请求的数据类型
+			charset: 'utf-8',
+			async: true,//true表示异步，false表示同步
+			url: '',
+			data: null,
+			success: null,
+			error:null
+		};
+		obj = standardization(obj, cObj);
+		if (isUndefined(obj['url'])) {
+			return;
 		}
-		function getApp(){
-			var u = navigator.userAgent.toLowerCase();
-			if(u.indexOf('iphone')>-1){
-				return 'iphone';
+		/*
+		 * errorFun
+		 *功能：执行error
+		*/
+		var errorFun=function(info){
+			if(!isUndefined(obj['error']) && valType(obj['error'])=='function'){
+				obj['error'](info);
+			}
+			else{
+				obj['success'](null);
+			}
+		};
+		/*
+		 * successFun
+		 *功能：执行success
+		*/
+		var successFun=function(success){
+			if(!isUndefined(obj['success']) && valType(obj['success'])=='function'){
+				obj['success'](success);
+			}
+		};
+		/*
+		 * createXHR
+		 *功能：用来为ajax函数提供支持
+		*/
+		var createXHR=function() {
+			if (window.XMLHttpRequest) {
+				return new XMLHttpRequest();
+			} else if (window.ActiveXObject) {
+				try {
+					return new ActiveXObject('Microsoft.XMLHTTP');
+				} catch(event) {
+					try {
+						return new ActiveXObject('Msxml2.XMLHTTP');
+					} catch(event) {}
+				}
+			}
+		};
+		/*
+		 * formatParams
+		 * 功能：将对象转成地址字符串，为ajax函数提供支持
+		 * @obj：传递一个对象
+		*/
+		var formatParams=function(obj) {
+			var arr = [];
+			for (var key in obj) {
+				arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+			}
+			return arr.join('&');
+		};
+		if (valType(cObj) != 'object') {
+			if(!isUndefined(obj['error'])){
+				obj.error(event);
+			}
+			return;
+		}
+		
+		if (obj.dataType === 'json' || obj.dataType === 'text' || obj.dataType === 'html' || obj.dataType === 'xml') {
+			var xhr = createXHR();
+			callback = function() {
+				//判断http的交互是否成功
+				if (xhr.status === 200) {
+					if (obj.dataType === 'json') {
+						try {
+							successFun(eval('(' + xhr.responseText + ')')); //回调传递参数
+						}
+						catch(event) {
+							successFun(null);
+						}
+					} else {
+						successFun(xhr.responseText); //回调传递参数
+					}
+				} 
+				else {
+					errorFun({code:xhr.status,message:xhr.statusText});
+				}
+			};
+			obj.data = formatParams(obj.data); //通过params()将名值对转换成字符串
+			if (obj.method === 'get' && !isUndefined(obj.data)) {
+				if (obj.data != '') {
+					if (obj.url.indexOf('?') == -1) {
+						obj.url += '?' + obj.data
+					} else {
+						obj.url += '&' + obj.data;
+					}
+				}
+			}
+			if (obj.async === true) { //true表示异步，false表示同步
+				addListener(xhr,'readystatechange',function(event){
+					if (this.readyState === 4 && callback != null) { //判断对象的状态是否交互完成
+						callback(); //回调
+					}
+				});
+			}
+			xhr.open(obj.method, obj.url, obj.async);
+			if (obj.method === 'post') {
+				try{
+					xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+					xhr.setRequestHeader('charset', obj['charset']);
+					xhr.send(obj.data);
+				}
+				catch(event){
+					callback();
+				}
+			}
+			else {
+				try{
+					xhr.send(null); //get方式则填null
+				}
+				catch(event){
+					callback();
+				}
+			}
+			if (obj.async === false) { //同步
+				callback();
+			}
+
+		}
+		else if (obj.dataType === 'jsonp') {
+			var oHead = document.getElementsByTagName('head')[0];
+			var oScript = document.createElement('script');
+			var callbackName = 'callback' + new Date().getTime();
+			var params = formatParams(obj.data) + '&callback=' + callbackName; //按时间戳拼接字符串
+			//拼接好src
+			oScript.src = obj.url.split('?') + '?' + params;
+			//插入script标签
+			oHead.insertBefore(oScript, oHead.firstChild);
+			//jsonp的回调函数
+			window[callbackName] = function(json) {
+				if(!isUndefined(obj['success']) && valType(obj['success'])==='function'){
+					obj['success'](json);
+				}
+				oHead.removeChild(oScript);
+			};
+		}
+	}
+	/*
+	 * documentReady
+	 * 功能：判断页面加载完成
+	 * @fn：页面加载完成后执行的函数
+	*/
+	function documentReady(fn) {
+		var isReady = false;
+		var timer = null;
+		var doReady = function() {
+			if(timer) clearInterval(timer);
+			if(isReady) return;
+			isReady = true;
+			if(valType(fn) == 'function') {
+				fn();
+			}
+		};
+		var bodyLoad = function() {
+			timer = setInterval(function() {
+				try {
+					if(!isUndefined(document.readyState) && document.readyState == 'complete') {
+						doReady();
+					}
+				} catch(event) {};
+			}, 10);
+		};
+		var w3c = function() {
+			if(valType(fn) == 'function') {
+				fn();
+			}
+			removeListener(window, 'load', w3c);
+		};
+		if(!isUndefined($('body'))){
+			if(valType(fn) == 'function') {
+				fn();
 			}
 		}
-		return into(videoObj);
+		else{
+			try {
+				addListener(window, 'load', w3c);
+			} catch(event) {
+				bodyLoad();
+			}
+		}
+		
+	}
+	/*
+	 * getPath
+	 * 功能：获取该js文件所在路径
+	*/
+	function getPath(siz) {
+		var scriptList = document.scripts,
+			thisPath = scriptList[scriptList.length - 1].src;
+		for (var i = 0; i < scriptList.length; i++) {
+			var scriptName = scriptList[i].getAttribute('name') || scriptList[i].getAttribute('data-name');
+			var src = scriptList[i].src.slice(scriptList[i].src.lastIndexOf('/') + 1, scriptList[i].src.lastIndexOf('.'));
+			if ((scriptName && (scriptName == 'ckplayer' || scriptName == 'ckplayer.min')) || (scriptList[i].src && (src == 'ckplayer' || src == 'ckplayer.min'))) {
+				thisPath = scriptList[i].src;
+				break;
+			}
+		}
+		var path=thisPath.substring(0, thisPath.lastIndexOf('/js/') + 1);
+		if(!isUndefined(siz)){
+			path+=siz+'/';
+		}
+		return path;
+	}
+	/*
+	 * checkJs
+	 * 功能：判断js是否已加载
+	 * @file：js文件路径
+	*/
+	function checkJs(file) {
+		var scriptList = document.scripts;
+		for (var i = 0; i < scriptList.length; i++) {
+			if(scriptList[i].src==file){
+				return scriptList[i];
+			}
+		}
+		return false;
+	}
+	/*
+	 * getMaxZIndex
+	 * 功能：获取当前页面最大深度
+	*/
+	function getMaxZIndex() {
+		var arr = document.all || document.querySelectorAll('*');
+		var maxZ = -1;
+		for (var i = 0; i < arr.length; i++) {
+			var temp = null;
+			try {
+				temp = window.getComputedStyle(arr[i], null).zIndex;
+			} catch (event) {
+				if (arr[i].style) {
+					temp = arr[i].style.zIndex;
+				}
+			}
+			if (temp != 'auto' && parseInt(temp) > maxZ) {
+				maxZ = parseInt(temp);
+			}
+		}
+		return maxZ;
+	}
+	/*
+	 * getWindowSize
+	 * 功能：获取window的宽和高
+	*/
+	function getWindowSize() {
+		return {
+			width: window.innerWidth,
+			height: window.innerHeight
+		};
+	}
+	/*
+	 * standardization
+	 * 功能：将对象Object标准化，将n对象替换进o对象
+	 * @o:标准化对象，@n：外部传递对象
+	*/
+	function standardization(o, n) { //n替换进o
+		var h = {};
+		var k;
+		for (k in o) {
+			h[k] = o[k];
+		}
+		for (k in n) {
+			if(k in h){
+				h[k] = n[k];
+			}
+		}
+		return h;
+	}
+	/*
+	 * mergeObj
+	 * 功能：将新对象合并到原对象中，需要确保原对像里有对应的值并且类型一样
+	 * @o:原对象，@n：新对象
+	*/
+	function mergeObj(o,n){
+		var h = {};
+		var k;
+		for (k in o) {
+			h[k] = o[k];
+		}
+		for (k in n) {
+			if(k in h){
+				switch(valType(h[k])){
+					case 'object':
+						if(valType(n[k])=='object'){
+							h[k] = mergeObj(h[k],n[k]);
+						}
+						break;
+					default:
+						if(valType(h[k])==valType(n[k])){
+							h[k] = n[k];
+						}
+						break;
+				}
+			}
+		}
+		return h;
+	}
+	/*
+	 * valType
+	 * 功能：判断变量类型
+	*/
+	function valType(val) {
+		if(typeof val==='undefined') return 'undefined';
+		var str=Object.prototype.toString.call(val).split(' ')[1].replace(']','').toLowerCase();
+		if(str.substr(0,4)=='html' && (str.substr(-7)=='element' || str.substr(-8)=='document' || str=='window')){
+			str='htmlobject';
+		}
+		if(str=='htmlcollection' || str=='nodelist'){
+			str='htmlarray';
+		}
+		return str;
+	}
+	/*
+	 * isUndefined
+	 * 功能：判断变量是否存在或值是否为undefined
+	*/
+	function isUndefined(val) {
+		try {
+			return valType(val)==='undefined' || val === undefined || val === null || (valType(val)==='number' && isNaN(val));
+		} catch (event) {
+			return true;
+		}
+		return false;
+	}
+	/*
+	 * prev
+	 * 功能：获取指定节点前一个同胞节点
+	 * @ele：要获取的节点
+	*/
+	function prev(ele) {
+		var e = ele.previousSibling;
+		if (e == null) { //测试同胞节点是否存在，否则返回空
+			return null;
+		}
+		if (e.nodeType == 3) { //如果同胞节点为文本节点
+			var t = prev(e);
+			if (t && t.nodeType == 1) {
+				return t;
+			}
+		} else {
+			if (e.nodeType == 1) { //确认节点为节点节点才返回
+				return e;
+			} else {
+				return false;
+			}
+		}
+	}
+	/*
+	 * next
+	 * 功能：获取指定节点下一个同胞节点
+	 * @ele：要获取的节点
+	*/
+	function next(ele) {
+		var e = ele.nextSibling;
+		if (e == null) { //测试同胞节点是否存在，否则返回空
+			return null;
+		}
+		if (e.nodeType == 3) { //如果同胞节点为文本节点
+			var t = next(e);
+			if (t && t.nodeType == 1) {
+				return t;
+			}
+		} else {
+			if (e.nodeType == 1) { //确认节点为节点才返回
+				return e;
+			} else {
+				return false;
+			}
+		}
+	}
+	/*
+	 * addListener
+	 * 功能：事件监听
+	 * @ele：监听对象，@e：事件名称，@f：返回事件函数
+	*/
+	function addListener(ele, e, f, t) {
+		if (isUndefined(t)) {
+			t = false;
+		}
+		if (ele.addEventListener) {
+			try {
+				ele.addEventListener(e, f, t);
+			} catch (event) {}
+		} else if (ele.attachEvent) {
+			try {
+				ele.attachEvent('on' + e, f);
+			} catch (event) {}
+		} else {
+			ele['on' + e] = f;
+		}
+		if(isUndefined(ele.listenerList)){
+			ele.listenerList=[];
+		}
+		ele.listenerList.push([e,f]);
+		return ele;
+	};
+	/*
+	 * removeListener
+	 * 功能：删除事件监听
+	 * @ele：监听对象，@e：事件名称，@f：返回事件函数
+	*/
+	function removeListener(ele, e, f, t) {
+		if (isUndefined(t)) {
+			t = false;
+		}
+		if (ele.removeEventListener) {
+			try {
+				ele.removeEventListener(e, f, t);
+			} catch (e) {}
+		} else if (ele.detachEvent) {
+			try {
+				ele.detachEvent('on' + e, f);
+			} catch (e) {}
+		} else {
+			ele['on' + e] = null;
+		}
+		if(!isUndefined(ele.listenerList)){
+			var temp=[];
+			for(var i=0;i<ele.listenerList.length;i++){
+				if(ele.listenerList[i][0]!=e || ele.listenerList[i][1]!=f){
+					temp.push(ele.listenerList[i]);
+				}
+			}
+			ele.listenerList=temp;
+		}
+		return ele;
+	}
+	/*
+	 * formatSeconds
+	 * 功能：將秒转化成时分秒
+	*/
+	function formatSeconds(val) {
+		if(isUndefined(val)) val=0;
+		var result = parseInt(val);
+		if(isUndefined(result)) result=0;
+		if(result<0) result=0;
+		var h = Math.floor(result / 3600) < 10 ? '0' + Math.floor(result / 3600) : Math.floor(result / 3600),
+		m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60)),
+		s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60)),
+		res = '';
+		if(h !== '00') res += h+':';
+		res += m+':'+s;
+		return res;
+	}
+	/*
+	 * date
+	 * 功能：格式化的时间字符串
+	*/
+	function date(format, timestamp) {
+		if(isUndefined(timestamp)){
+			timestamp=new Date();
+		}
+		if(timestamp.toString().length<13) timestamp=timestamp*1000;
+		var a, jsdate = ((timestamp) ? new Date(timestamp) : new Date());
+		var pad = function(n, c) {
+			if((n = n + '').length < c) {
+				return new Array(++c - n.length).join('0') + n;
+			} else {
+				return n;
+			}
+		};
+		var txt_weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		var txt_ordin = {
+			1: 'st',
+			2: 'nd',
+			3: 'rd',
+			21: 'st',
+			22: 'nd',
+			23: 'rd',
+			31: 'st'
+		};
+		var txt_months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var f = {
+			// Day 
+			d: function() {
+				return pad(f.j(), 2)
+			},
+			D: function() {
+				return f.l().substr(0, 3)
+			},
+			j: function() {
+				return jsdate.getDate()
+			},
+			l: function() {
+				return txt_weekdays[f.w()]
+			},
+			N: function() {
+				return f.w() + 1
+			},
+			S: function() {
+				return txt_ordin[f.j()] ? txt_ordin[f.j()] : 'th'
+			},
+			w: function() {
+				return jsdate.getDay()
+			},
+			z: function() {
+				return(jsdate - new Date(jsdate.getFullYear() + '/1/1')) / 864e5 >> 0
+			},
+	
+			// Week 
+			W: function() {
+				var a = f.z(),
+					b = 364 + f.L() - a;
+				var nd2, nd = (new Date(jsdate.getFullYear() + '/1/1').getDay() || 7) - 1;
+				if(b <= 2 && ((jsdate.getDay() || 7) - 1) <= 2 - b) {
+					return 1;
+				} else {
+					if(a <= 2 && nd >= 4 && a >= (6 - nd)) {
+						nd2 = new Date(jsdate.getFullYear() - 1 + '/12/31');
+						return date('W', Math.round(nd2.getTime() / 1000));
+					} else {
+						return(1 + (nd <= 3 ? ((a + nd) / 7) : (a - (7 - nd)) / 7) >> 0);
+					}
+				}
+			},
+	
+			// Month 
+			F: function() {
+				return txt_months[f.n()]
+			},
+			m: function() {
+				return pad(f.n(), 2)
+			},
+			M: function() {
+				return f.F().substr(0, 3)
+			},
+			n: function() {
+				return jsdate.getMonth() + 1
+			},
+			t: function() {
+				var n;
+				if((n = jsdate.getMonth() + 1) == 2) {
+					return 28 + f.L();
+				} else {
+					if(n & 1 && n < 8 || !(n & 1) && n > 7) {
+						return 31;
+					} else {
+						return 30;
+					}
+				}
+			},
+	
+			// Year 
+			L: function() {
+				var y = f.Y();
+				return(!(y & 3) && (y % 1e2 || !(y % 4e2))) ? 1 : 0
+			},
+			//o not supported yet 
+			Y: function() {
+				return jsdate.getFullYear()
+			},
+			y: function() {
+				return(jsdate.getFullYear() + '').slice(2)
+			},
+	
+			// Time 
+			a: function() {
+				return jsdate.getHours() > 11 ? 'pm' : 'am'
+			},
+			A: function() {
+				return f.a().toUpperCase()
+			},
+			B: function() {
+				// peter paul koch: 
+				var off = (jsdate.getTimezoneOffset() + 60) * 60;
+				var theSeconds = (jsdate.getHours() * 3600) + (jsdate.getMinutes() * 60) + jsdate.getSeconds() + off;
+				var beat = Math.floor(theSeconds / 86.4);
+				if(beat > 1000) beat -= 1000;
+				if(beat < 0) beat += 1000;
+				if((String(beat)).length == 1) beat = '00' + beat;
+				if((String(beat)).length == 2) beat = '0' + beat;
+				return beat;
+			},
+			g: function() {
+				return jsdate.getHours() % 12 || 12
+			},
+			G: function() {
+				return jsdate.getHours()
+			},
+			h: function() {
+				return pad(f.g(), 2)
+			},
+			H: function() {
+				return pad(jsdate.getHours(), 2)
+			},
+			i: function() {
+				return pad(jsdate.getMinutes(), 2)
+			},
+			s: function() {
+				return pad(jsdate.getSeconds(), 2)
+			},
+			//u not supported yet 
+	
+			// Timezone 
+			//e not supported yet 
+			//I not supported yet 
+			O: function() {
+				var t = pad(Math.abs(jsdate.getTimezoneOffset() / 60 * 100), 4);
+				if(jsdate.getTimezoneOffset() > 0) t = '-' + t;
+				else t = '+' + t;
+				return t;
+			},
+			P: function() {
+				var O = f.O();
+				return(O.substr(0, 3) + ':' + O.substr(3, 2))
+			},
+			//T not supported yet 
+			//Z not supported yet 
+	
+			// Full Date/Time 
+			c: function() {
+				return f.Y() + '-' + f.m() + '-' + f.d() + 'T' + f.h() + ':' + f.i() + ':' + f.s() + f.P()
+			},
+			//r not supported yet 
+			U: function() {
+				return Math.round(jsdate.getTime() / 1000)
+			}
+		};
+	
+		return format.replace(/([a-zA-Z])/g,function(t, s) {
+			var ret='';
+			if(t != s) {
+				// escaped 
+				ret = s;
+			} else if(f[s]) {
+				// a date function exists 
+				ret = f[s]();
+			} else {
+				// nothing special 
+				ret = s;
+			}
+			return ret;
+		});
+	}
+	/*
+	 * dataURLtoBlob
+	 * 功能，base64转blob
+	 */
+	function dataURLtoBlob(dataurl) {
+		var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new Blob([u8arr], { type: mime });
+	}
+	/*
+	 * decodeURIString
+	 * 功能，解码中文
+	 */
+	function decodeURIString(obj){
+		for(var k in obj){
+			if(valType(obj[k])=='string' && obj[k]){
+				try{
+					obj[k]=decodeURI(obj[k]);
+				}
+				catch(event){}
+			}
+			if(valType(obj[k])=='object'){
+				obj[k]=decodeURIString(obj[k]);
+			}
+		}
+		return obj;
+	}
+	/*
+	 * getApp
+	 * 功能，获取平台类型是否是iphone
+	 */
+	function getApp(){
+		var u = navigator.userAgent.toLowerCase();
+		if(u.indexOf('iphone')>-1){
+			return 'iphone';
+		}
 	}
 	return ckplayerEmbed;
 }));
