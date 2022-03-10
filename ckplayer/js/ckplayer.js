@@ -6515,12 +6515,13 @@
 			}, 10);
 		};
 		var w3c = function() {
+			
 			if(valType(fn) == 'function') {
 				fn();
 			}
 			removeListener(window, 'load', w3c);
 		};
-		if(!isUndefined($('body'))){
+		if(!isUndefined(document.body)){
 			if(valType(fn) == 'function') {
 				fn();
 			}
