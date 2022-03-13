@@ -1013,12 +1013,12 @@
 			C['rightBar'].append(C['rightBar']['smallwindows']);
 			
 			C['rightBar']['smallwindows']['open']=createlButton('ck-bar-btn ck-btn-smallwindows-open');
-			C['rightBar']['smallwindows']['open'].click(function(){player.smallWindows(false)});
+			C['rightBar']['smallwindows']['open'].click(function(){tip(this,language['smallwindowsClose'],null,'left');player.smallWindows(false);});
 			C['rightBar']['smallwindows']['open'].mouseover(function(){tip(this,language['smallwindowsOpen'],null,'left');});
 			C['rightBar']['smallwindows'].append(C['rightBar']['smallwindows']['open']);
 			
 			C['rightBar']['smallwindows']['close']=createlButton('ck-bar-btn ck-btn-smallwindows-close');
-			C['rightBar']['smallwindows']['close'].click(function(){player.smallWindows(true)});
+			C['rightBar']['smallwindows']['close'].click(function(){tip(this,language['smallwindowsOpen'],null,'left');player.smallWindows(true)});
 			C['rightBar']['smallwindows']['close'].mouseover(function(){tip(this,language['smallwindowsClose'],null,'left');});
 			C['rightBar']['smallwindows'].append(C['rightBar']['smallwindows']['close']);
 			//循环按钮组
@@ -1026,12 +1026,12 @@
 			C['rightBar'].append(C['rightBar']['loop']);
 			
 			C['rightBar']['loop']['open']=createlButton('ck-bar-btn ck-btn-loop-open');
-			C['rightBar']['loop']['open'].click(function(){player.loop(false);});
+			C['rightBar']['loop']['open'].click(function(){tip(this,language['loopClose'],null,'left');player.loop(false);});
 			C['rightBar']['loop']['open'].mouseover(function(){tip(this,language['loopOpen'],null,'left');});
 			C['rightBar']['loop'].append(C['rightBar']['loop']['open']);
 			
 			C['rightBar']['loop']['close']=createlButton('ck-bar-btn ck-btn-loop-close');
-			C['rightBar']['loop']['close'].click(function(){player.loop(true);});
+			C['rightBar']['loop']['close'].click(function(){tip(this,language['loopOpen'],null,'left');player.loop(true);});
 			C['rightBar']['loop']['close'].mouseover(function(){tip(this,language['loopClose'],null,'left');});
 			C['rightBar']['loop'].append(C['rightBar']['loop']['close']);
 			C['rightBar'].mouseout(rightBarMouseOut).mouseover(rightBarMouseOver);
@@ -1349,7 +1349,7 @@
 		},
 		/*
 		 * loadedMetaData
-		 * 功能：视频播放对象video注册内部监听调用函数
+		 * 功能：获取元数据后执行的函数
 		*/
 		loadedMetaData=function(){
 			eventTarget('loadedMetaData',{
@@ -1360,6 +1360,9 @@
 				duration:duration,
 				volume:CT.volume
 			});
+			if('error' in C){
+				C['error'].hide();
+			}
 			replaceInformation('videoWidth',CT.videoWidth);
 			replaceInformation('videoHeight',CT.videoHeight);
 			replaceInformation('volume',parseInt(CT.volume*100));
@@ -1447,9 +1450,6 @@
 					loadMeta=false;
 					player.pause();
 					setTimeout(player.pause,300);
-				}
-				if('error' in C){
-					C['error'].hide();
 				}
 			},
 			timeUpDate:function(){//监听播放时间
