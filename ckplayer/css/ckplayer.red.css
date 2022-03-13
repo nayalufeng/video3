@@ -1115,6 +1115,7 @@
 	border-radius: 50%;
 	overflow: hidden;
 	position: relative;
+	float: left;
 	z-index: 4;
     left: 0px;
     cursor: pointer;
