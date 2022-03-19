@@ -127,7 +127,8 @@
 		language:'',//语言包文件
 		barHideTime:1500,//控制栏隐藏时间
 		playbackrateOpen:true,//是否开启控制栏倍速选项
-		playbackrateList:[0.75,1,1.25,1.5,2,4]//倍速配置值
+		playbackrateList:[0.75,1,1.25,1.5,2,4],//倍速配置值
+		cookie:null//开启cookie功能
 	};
 	function ckplayerEmbed(videoObj){
 		/*
@@ -153,6 +154,7 @@
 		var video=null;//视频播放器对象
 		var duration=0;//总时间
 		var mutedState='';//默认静音状态
+		var recoveryVolume=false;//是否需要在播放时恢复音量
 		var waited=true;//是否缓冲结束
 		var paused=true;//默认暂停状态
 		var loadTime=0;//已加载部分
@@ -183,7 +185,10 @@
 		var nowZoom=100;//当前缩放比例
 		var smallWindowsState=false;//当前是否处理小窗口状态
 		var isDrag=false;//是否在播放器上按下并且拖动
-		
+		var ckplayerCookie='ckplayercookie2022';
+		var cookieName='';//cookie名称
+		var cookieTime=0;//cookie保存时间，单位：秒
+		var cookieArray=[];//保存当前所有记录
 		/*
 		 * into
 		 * 功能：初始化，调用播放器则首先调用该函数
@@ -402,7 +407,11 @@
 				video.attr('width','100%').attr('height','100%');
 				CV.append(video);
 			}
+			video.volume=vars['volume'];
 			if(vars['autoplay']){
+				player.volume(0);
+				player.muted();
+				recoveryVolume=true;
 				video.attr('autoplay','autoplay');
 				paused=false;
 			}
@@ -413,7 +422,6 @@
 			if(CT.loop){
 				video.attr('loop','loop');
 			}
-			video.volume=vars['volume'];
 			if(vars['controls']){
 				video.controls=true;
 			}
@@ -474,6 +482,9 @@
 			 * 注册视频播放器内部监听，监听到事件后注册给CT使用
 			 */
 			addAllListener();
+			/*
+			 * 如果需要在视频播放器加载成功后调用相关函数，此时则开始调用
+			 */
 			if(!isUndefined(vars['loaded'])){
 				if(valType(vars['loaded'])=='function'){
 					try{
@@ -488,7 +499,13 @@
 					catch(event){}
 				}
 			}
-			changeVideo(vars['video']);//播放视频
+			/*
+			 * 播放视频
+			 */
+			changeVideo(vars['video']);
+			/*
+			 * 返回 播放器
+			 */
 			return player;
 		},
 		/*
@@ -510,9 +527,6 @@
 				}
 			}
 			video.htm('');
-			if(!isUndefined(vars['seek']) && valType(vars['seek'])=='number' && vars['seek']>0 && !seekTime){
-				seekTime=vars['seek'];
-			}
 			if(!isUndefined(vars['ad'])){
 				ad=vars['ad'];
 			}
@@ -586,6 +600,43 @@
 			loadLogo();
 			if(isChangeDef){
 				checkDefinition();
+			}
+			/*
+			 * 对cookie进行相关分析
+			*/
+			if(vars['cookie']){
+				if(valType(vars['cookie'])=='array' && vars['cookie'].length>=2){
+					if(vars['cookie'][0] && valType(vars['cookie'][0])=='string'){
+						cookieName=vars['cookie'][0];
+					}
+					if(vars['cookie'][1] && valType(vars['cookie'][1])=='number'){
+						cookieTime=vars['cookie'][1];
+					}
+				}
+				if(valType(vars['cookie'])=='object' && !isUndefined(vars['cookie']['name'])){
+					cookieName=vars['cookie']['name'];
+					if(!isUndefined(vars['cookie']['hour']) && valType(vars['cookie']['hour'])=='number'){
+						cookieTime=vars['cookie']['hour'];
+					}
+				}
+				if(valType(vars['cookie'])=='string'){
+					cookieName=vars['cookie'];
+				}
+				if(cookieName){
+					cookieName=cookieName.replace(/[ ]*,[ ]*|[ ]+/g, '').replace(/[ ]*;[ ]*|[ ]+/g, '');
+				}
+			}
+			if(!isUndefined(vars['seek']) && !seekTime){
+				if(valType(vars['seek'])=='number' && vars['seek']>0){
+					seekTime=vars['seek'];
+				}
+				if(valType(vars['seek'])=='string' && vars['seek']=='cookie' && cookieName){
+					var cke=player.cookie(cookieName);
+					if(cke){
+						seekTime=cke['time'];
+					}
+					
+				}
 			}
 		},
 		/*
@@ -1318,6 +1369,40 @@
 			catch(event){console.error(event)}
 		},
 		/*
+		 * changeCookie
+		 * 功能：使用cookie记录时间
+		*/
+		changeCookie=function(time){
+			var arr=[];
+			var cStr=cookie(ckplayerCookie);
+			var i=0,y=0;
+			var cTime=Math.floor(Date.now()*0.001);
+			time=Math.floor(time*100);
+			time=time*0.01;
+			if(!cookieTime){
+				cookieTime=365*24;
+			}
+			if(!cStr){
+				arr.push([cookieName,time,cTime+cookieTime*3600]);
+			}
+			else{
+				arr=stringToArray(cStr);
+				var have=false;
+				var tempArr=[[cookieName,time,cTime+cookieTime*3600]];
+				for(i=0;i<arr.length;i++){
+					if(arr[i][2]>cTime && arr[i][0]!=cookieName && y<19){
+						tempArr.push(arr[i]);
+						y++;
+					}
+				}
+				arr=tempArr;
+			}
+			if(arr.length>0){
+				cookie(ckplayerCookie,arrayToString(arr));
+			}
+			cookieArray=arr;
+		},
+		/*
 		 * loadTrack
 		 * 功能：加载track
 		*/
@@ -1487,6 +1572,9 @@
 				}
 				if(!isUndefined(C['error']) && C['error'].css('display')=='block'){
 					C['error'].hide();
+				}
+				if(cookieName){
+					changeCookie(playTime);
 				}
 				replaceInformation('audioDecodedByteCount',this.webkitAudioDecodedByteCount || this.audioDecodedByteCount || 0);
 				replaceInformation('videoDecodedByteCount',this.webkitVideoDecodedByteCount || this.videoDecodedByteCount || 0);
@@ -1662,6 +1750,10 @@
 				else{
 					C['bar']['pbox'].addClass('ck-bar-progress-out');
 				}
+				if(recoveryVolume){
+					recoveryVolume=false;
+					player.exitMuted();
+				}
 				hideBar();
 				closePauseAd();//关闭暂停广告
 				playType='';
@@ -1683,7 +1775,7 @@
 						}
 					}
 				}
-				if(seekTime && (isUndefined(vars['live']) || (!isUndefined(vars['live']) && valType(vars['live'])=='boolean' && !vars['live']))){//如果默认需要跳转，则进行seek
+				if(seekTime && (isUndefined(vars['live']) || (!isUndefined(vars['live']) && valType(vars['live'])=='boolean' && !vars['live'])) && seekTime<parseInt(duration*100)*0.01){//如果默认需要跳转，则进行seek
 					player.seek(seekTime);
 					seekTime=0;
 				}			
@@ -3258,6 +3350,50 @@
 					newEvent.addEventListener('mouseActive',fn);
 				}
 				return this;
+			},
+			/*
+			 * cookie
+			 * 功能，读取cookie
+			*/
+			cookie:function(name){
+				if(name=='delete'){
+					cookie(ckplayerCookie,'delete');
+					return null;
+				}
+				if(!isUndefined(name) && name){
+					name=name.replace(/[ ]*,[ ]*|[ ]+/g, '').replace(/[ ]*;[ ]*|[ ]+/g, '');
+				}
+				var cStr=cookie(ckplayerCookie);
+				if(cStr){
+					var arr=stringToArray(cStr);
+					var tempArr=[];
+					var cTime=parseInt(Date.now()*0.001);
+					for(i=0;i<arr.length;i++){
+						if(arr[i][2]>cTime){
+							tempArr.push(arr[i]);
+						}
+					}
+					arr=tempArr;
+					if(arr.length>0){
+						cookie(ckplayerCookie,arrayToString(arr));
+						for(var i=0;i<arr.length;i++){
+							arr[i]={
+								name:arr[i][0],
+								time:arr[i][1],
+								expirationTime:date('Y-m-d H:i:s',arr[i][2]),
+								expirationTimeStamp:arr[i][2]
+							};
+							if(!isUndefined(name) && name==arr[i]['name']){
+								return arr[i];
+							}
+						}
+						return arr;
+					}
+					else{
+						cookie(ckplayerCookie,'delete');
+					}
+				}
+				return null;
 			},
 			/*
 			 * remove
@@ -4961,7 +5097,7 @@
 					if(loadTime<bufferEnd){
 						loadTime=bufferEnd;
 					}
-					replaceInformation('loadTime',parseInt(loadTime*100)/100);
+					replaceInformation('loadTime',parseInt(loadTime*100)*0.01);
 					C['bar']['pbox']['load'].css('width',(loadTime/duration)*100+'%');
 				}
 			}
@@ -7024,6 +7160,100 @@
 		if(u.indexOf('iphone')>-1){
 			return 'iphone';
 		}
+	}
+	/*
+	 * cookie
+	 * 功能，操作cookie
+	 */
+	function cookie(name,value){
+		var set=function(name,value){
+			var time = 360*24*60*60*1000;
+			var exp = new Date();
+			exp.setTime(exp.getTime() + time);
+			try{
+				document.cookie = name + '='+ escape (value) + ';expires=' + exp.toGMTString();
+			}
+			catch(event){console.error(event)}
+		},
+		get=function(name){
+			var arr,reg=new RegExp('(^| )'+name+'=([^;]*)(;|$)');
+			if(arr=document.cookie.match(reg)){
+				return unescape(arr[2]);
+			}
+			else{
+				return null;
+			}
+		},
+		del=function(name){
+			var exp = new Date();
+			exp.setTime(exp.getTime() - 1);
+			var cval=get(name);
+			if(cval!=null){
+				document.cookie= name + '='+cval+';expires='+exp.toGMTString();
+			}
+		};
+		if(!isUndefined(name) && !isUndefined(value)){
+			if(value=='delete'){
+				del(name);
+				return null;
+			}
+			else{
+				set(name,value);
+				return get(name);
+			}
+			
+		}
+		else if(!isUndefined(name) && isUndefined(value)){
+			return get(name);
+		}
+		else if(!isUndefined(name)){
+			
+		}
+	}
+	/*
+	 * arrayToString
+	 * 功能，二维数组传化成字符串
+	 */
+	function arrayToString(arr) {
+		var str='';
+		if(!isUndefined(arr)){
+			for(var i=0;i<arr.length;i++){
+				var temp=arr[i];
+				if(i>0){
+					str+=',';
+				}
+				for(var y=0;y<temp.length;y++){
+					if(y>0){
+						str+=';';
+					}
+					if(valType(temp[y])=='number'){
+						str+=parseInt(temp[y]*100);
+					}
+					else{
+						str+=temp[y];
+					}
+					
+				}
+			}
+		}
+		return str;
+	}
+	/*
+	 * stringToArray
+	 * 功能，字符串转化成二维数组
+	 */
+	function stringToArray(str) {
+		var newArr=[];
+		if(!isUndefined(str)){
+			var arr=str.split(',');
+			for(var i=0;i<arr.length;i++){
+				var temp=arr[i].split(';');
+				temp[1]=parseInt(temp[1])*0.01;
+				temp[2]=parseInt(temp[2])*0.01;
+				newArr.push(temp);
+			}
+		}
+		return newArr;
 	}
 	return ckplayerEmbed;
 }));
