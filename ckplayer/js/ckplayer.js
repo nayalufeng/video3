@@ -164,6 +164,8 @@
 		var playType='';//播放类别，默认=''，是通过api接口播放，='button'则判定是通过点击按钮播放
 		var msgSetTime=null,tipSetTime=null,mouseSetTime=null;//用于显示提示后自动隐藏的计时器
 		var adFrontSetTime=null,adPauseSetTime=null;//贴片广告和暂停广告的计时器
+		var closeTipFun=null;//关闭提示的函数
+		var closeTipMouseOut=null;//鼠标离开节点时执行的函数
 		var waitingMessage=true;//显示缓冲提示
 		var hidePreviewSetTime=null;//隐藏预览图的计时器
 		var pSliderMouseDown=false;//判断是否在进度条上的滑块上按下
@@ -3369,7 +3371,7 @@
 					var tempArr=[];
 					var cTime=parseInt(Date.now()*0.001);
 					for(i=0;i<arr.length;i++){
-						if(arr[i][2]>cTime){
+						if(parseInt(arr[i][2])>cTime){
 							tempArr.push(arr[i]);
 						}
 					}
@@ -4554,6 +4556,10 @@
 		*/
 		message=function(str,right){
 			C['message'].htm('');
+			var msgHide=function(){
+				C['message'].removeClass('ck-message-right').removeClass('ck-animate-bouncein').removeClass('ck-animate');
+				C['message'].hide();
+			};
 			if(str){
 				C['message'].htm(str);
 				C['message'].show();
@@ -4570,14 +4576,12 @@
 					msgSetTime=null;
 				}
 				msgSetTime=setTimeout(function(){
-					C['message'].removeClass('ck-message-right').removeClass('ck-animate-bouncein').removeClass('ck-animate');
-					C['message'].hide();
+					msgHide();
 					msgSetTime=null;
 				},1500);
 			}
 			else{
-				C['message'].removeClass('ck-message-right').removeClass('ck-animate-bouncein').removeClass('ck-animate');
-				C['message'].hide();
+				msgHide();
 			}
 		},
 		/*
@@ -4605,26 +4609,26 @@
 					C['tip']['triangle'].removeClass('ck-triangle-left').addClass('ck-triangle-auto');
 				}
 				tipResize(ele,cl,align);
-				if(isUndefined(CT.closeTipSetTimeOut)){
-					CT.closeTipSetTimeOut=function(){
+				if(isUndefined(closeTipFun)){
+					closeTipFun=function(){
 						if(tipSetTime){
 							clearTimeout(tipSetTime);
 							tipSetTime=null;
 						}
 					};
-					CT.closeTipMouseOut=function(ele){
-						CT.closeTipSetTimeOut();
+					closeTipMouseOut=function(ele){
+						closeTipFun();
 						tipSetTime=setTimeout(function(){
 							tip();
 							tipSetTime=null;
 						},100);
 						if(ele){
-							ele.removeListener('mouseout',CT.closeTipMouseOut);
+							ele.removeListener('mouseout',closeTipMouseOut);
 						}
 					};
 				}
-				CT.closeTipSetTimeOut();
-				ele.mouseout(function(){CT.closeTipMouseOut(ele)});
+				closeTipFun();
+				ele.mouseout(function(){closeTipMouseOut(ele)});
 			}
 			else{
 				C['tip'].hide();
@@ -4914,7 +4918,7 @@
 					clearTimeout(moveTimer);
 					moveTimer=null;
 				}
-				CT.closeTipSetTimeOut();
+				closeTipFun();
 			};
 			var bgMouseOut=function(e){
 				clearTime();
