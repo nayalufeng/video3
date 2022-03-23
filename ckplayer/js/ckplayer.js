@@ -189,7 +189,7 @@
 		var nowZoom=100;//当前缩放比例
 		var smallWindowsState=false;//当前是否处理小窗口状态
 		var isDrag=false;//是否在播放器上按下并且拖动
-		var ckplayerCookie='ckplayercookie2022';
+		var ckplayerCookie='ckplayer-player-cookie';
 		var cookieName='';//cookie名称
 		var cookieTime=0;//cookie保存时间，单位：秒
 		var cookieArray=[];//保存当前所有记录
