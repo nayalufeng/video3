@@ -128,7 +128,9 @@
 		barHideTime:1500,//控制栏隐藏时间
 		playbackrateOpen:true,//是否开启控制栏倍速选项
 		playbackrateList:[0.75,1,1.25,1.5,2,4],//倍速配置值
-		cookie:null//开启cookie功能
+		cookie:null,//开启cookie功能
+		domain:null,//指定cookie保存的域
+		cookiePath:'/'//指定cookie保存路径
 	};
 	function ckplayerEmbed(videoObj){
 		/*
@@ -1400,7 +1402,8 @@
 				arr=tempArr;
 			}
 			if(arr.length>0){
-				cookie(ckplayerCookie,arrayToString(arr));
+				cookie(ckplayerCookie,'delete',vars['domain'],vars['cookiePath']);
+				cookie(ckplayerCookie,arrayToString(arr),vars['domain'],vars['cookiePath']);
 			}
 			cookieArray=arr;
 		},
@@ -3359,7 +3362,7 @@
 			*/
 			cookie:function(name){
 				if(name=='delete'){
-					cookie(ckplayerCookie,'delete');
+					cookie(ckplayerCookie,'delete',vars['domain']);
 					return null;
 				}
 				if(!isUndefined(name) && name){
@@ -3377,7 +3380,8 @@
 					}
 					arr=tempArr;
 					if(arr.length>0){
-						cookie(ckplayerCookie,arrayToString(arr));
+						cookie(ckplayerCookie,'delete',vars['domain'],vars['cookiePath']);
+						cookie(ckplayerCookie,arrayToString(arr),vars['domain'],vars['cookiePath']);
 						for(var i=0;i<arr.length;i++){
 							arr[i]={
 								name:arr[i][0],
@@ -3392,7 +3396,7 @@
 						return arr;
 					}
 					else{
-						cookie(ckplayerCookie,'delete');
+						cookie(ckplayerCookie,'delete',vars['domain'],vars['cookiePath']);
 					}
 				}
 				return null;
@@ -7169,13 +7173,19 @@
 	 * cookie
 	 * 功能，操作cookie
 	 */
-	function cookie(name,value){
+	function cookie(name,value,domain,path){
+		if(isUndefined(domain)){
+			domain='';
+		}
+		if(isUndefined(path)){
+			path='/';
+		}
 		var set=function(name,value){
 			var time = 360*24*60*60*1000;
 			var exp = new Date();
 			exp.setTime(exp.getTime() + time);
 			try{
-				document.cookie = name + '='+ escape (value) + ';expires=' + exp.toGMTString();
+				document.cookie = name + '='+ escape (value) + ';expires=' + exp.toGMTString()+';domain='+domain+';path='+path;
 			}
 			catch(event){console.error(event)}
 		},
@@ -7193,7 +7203,7 @@
 			exp.setTime(exp.getTime() - 1);
 			var cval=get(name);
 			if(cval!=null){
-				document.cookie= name + '='+cval+';expires='+exp.toGMTString();
+				document.cookie= name + '='+cval+';expires='+exp.toGMTString()+';domain='+domain+';path='+path;
 			}
 		};
 		if(!isUndefined(name) && !isUndefined(value)){
