@@ -224,6 +224,12 @@
 			 */
 			eventTarget();
 			/*
+			 * 监听页面标签状态（判断是否失去焦点）
+			 */
+			documentHidden(function(state){
+				eventTarget('visibilityState',state);
+			});
+			/*
 			 * 判断平台类型,主要是判断是否是iphone类型的平台
 			 */
 			app=getApp();
@@ -3422,7 +3428,10 @@
 			*/
 			visibilityState:function(fn){
 				if(!isUndefined(fn) && valType(fn)=='function'){
-					documentHidden(fn);
+					if(!isUndefined(document.visibilityState)){
+						fn(document.visibilityState === 'visible'?'show':'hidden');
+					}
+					newEvent.addEventListener('visibilityState',fn);
 				}
 				return this;
 			},
@@ -7305,7 +7314,6 @@
 				fn(document.visibilityState === 'visible'?'show':'hidden');
 			});
 		}
-		
 	}
 	return ckplayerEmbed;
 }));
