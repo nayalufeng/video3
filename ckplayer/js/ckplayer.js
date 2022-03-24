@@ -130,7 +130,8 @@
 		playbackrateList:[0.75,1,1.25,1.5,2,4],//倍速配置值
 		cookie:null,//开启cookie功能
 		domain:null,//指定cookie保存的域
-		cookiePath:'/'//指定cookie保存路径
+		cookiePath:'/',//指定cookie保存路径
+		documentFocusPause:false//窗口失去焦点后暂停播放
 	};
 	function ckplayerEmbed(videoObj){
 		/*
@@ -193,6 +194,7 @@
 		var cookieName='';//cookie名称
 		var cookieTime=0;//cookie保存时间，单位：秒
 		var cookieArray=[];//保存当前所有记录
+		var focusPause=true;//失去焦点前是否是暂停状态
 		/*
 		 * into
 		 * 功能：初始化，调用播放器则首先调用该函数
@@ -1457,6 +1459,19 @@
 			replaceInformation('videoHeight',CT.videoHeight);
 			replaceInformation('volume',parseInt(CT.volume*100));
 			replaceInformation('duration',parseInt(duration));
+			documentHidden(function(state){
+				if(vars['documentFocusPause']){
+					if(state=='show'){
+						if(!focusPause && paused){
+							player.play();
+						}
+					}
+					else{
+						focusPause=paused;
+						player.pause();
+					}
+				}
+			});
 		};
 		/*
 		 * videoHandler
@@ -3400,6 +3415,16 @@
 					}
 				}
 				return null;
+			},
+			/*
+			 * visibilityState
+			 * 功能：监听当前文档是否处于焦点状态 
+			*/
+			visibilityState:function(fn){
+				if(!isUndefined(fn) && valType(fn)=='function'){
+					documentHidden(fn);
+				}
+				return this;
 			},
 			/*
 			 * remove
@@ -7268,6 +7293,19 @@
 			}
 		}
 		return newArr;
+	}
+	/*
+	 * documentHidden
+	 * 功能，监听页面切换到其它标签，执行fn函数
+	 */
+	function documentHidden(fn){
+		if(!isUndefined(document.visibilityState)){
+			fn(document.visibilityState === 'visible'?'show':'hidden');
+			addListener(document,'visibilitychange',function(){
+				fn(document.visibilityState === 'visible'?'show':'hidden');
+			});
+		}
+		
 	}
 	return ckplayerEmbed;
 }));
