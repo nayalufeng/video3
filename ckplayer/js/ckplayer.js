@@ -131,7 +131,9 @@
 		cookie:null,//开启cookie功能
 		domain:null,//指定cookie保存的域
 		cookiePath:'/',//指定cookie保存路径
-		documentFocusPause:false//窗口失去焦点后暂停播放
+		documentFocusPause:false,//窗口失去焦点后暂停播放
+		mouseWheelVolume:2,//是否启用鼠标滚轮调节音量功能，0=不启用，1=启用，2=全屏时才启用
+		keyVolume:2//是否启用键盘控制音量调节，0=不启用，1=启用，2=全屏时才启用
 	};
 	function ckplayerEmbed(videoObj){
 		/*
@@ -1915,14 +1917,17 @@
 				event=window.event || event;
 				var keycode = event.keyCode || event.which;
 				var v=player.volume();
+				var pre=function(){
+					if(event.preventDefault){
+				        event.preventDefault();
+				    }
+				    else{
+				        event.returnValue = false;
+				    }
+				};
 				switch(keycode) {
 					case 32:
-					    if(event.preventDefault){
-					        event.preventDefault();
-					    }
-					    else{
-					        event.returnValue = false;
-					    }
+					    pre();
 						player.playOrPause();
 						break;
 					case 37:
@@ -1932,39 +1937,48 @@
 						player.fastNext();
 						break;
 					case 38:
-						player.volume(v+.1<1?v+=.1:1);
+						if(valType(vars['keyVolume'])=='number' && (vars['keyVolume']==1 || (vars['keyVolume']==2 && CT.full))){
+							pre();
+							player.volume(v+.1<1?v+=.1:1);
+						}
 						break;
 					case 40:
-						player.volume(v-.1>0?v-=.1:0);
+						if(valType(vars['keyVolume'])=='number' && (vars['keyVolume']==1 || (vars['keyVolume']==2 && CT.full))){
+							pre();
+							player.volume(v-.1>0?v-=.1:0);
+						}
 						break;
 					default:
 						break;
 				}
 			},
 			mouseWheel:function(event){
-				event=window.event || event;
-				var v=player.volume();
-				if(event.preventDefault){
-			        event.preventDefault();
-			    }
-			    else{
-			        event.returnValue = false;
-			    }
-				if(event.wheelDelta) {
-					if(event.wheelDelta > 0) {
-						player.volume(v+.1<1?v+=.1:1);
-					}
-					if(event.wheelDelta < 0) {
-						player.volume(v-.1>0?v-=.1:0);
-					}
-				} else if(event.detail) {
-					if(event.detail > 0) {
-						player.volume(v-.1>0?v-=.1:0);
-					}
-					if(event.detail < 0) {
-						player.volume(v+.1<1?v+=.1:1);
+				if(valType(vars['mouseWheelVolume'])=='number' && (vars['mouseWheelVolume']==1 || (vars['mouseWheelVolume']==2 && CT.full))){
+					event=window.event || event;
+					var v=player.volume();
+					if(event.preventDefault){
+				        event.preventDefault();
+				    }
+				    else{
+				        event.returnValue = false;
+				    }
+					if(event.wheelDelta) {
+						if(event.wheelDelta > 0) {
+							player.volume(v+.1<1?v+=.1:1);
+						}
+						if(event.wheelDelta < 0) {
+							player.volume(v-.1>0?v-=.1:0);
+						}
+					} else if(event.detail) {
+						if(event.detail > 0) {
+							player.volume(v-.1>0?v-=.1:0);
+						}
+						if(event.detail < 0) {
+							player.volume(v+.1<1?v+=.1:1);
+						}
 					}
 				}
+				
 			}
 		};
 		/*
