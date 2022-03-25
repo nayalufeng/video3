@@ -1328,6 +1328,7 @@
 					addListener(window, 'scroll', windowScroll);//监听窗口滚动
 				}
 			}
+			CT.mouseWheel(videoHandler.mouseWheel);
 		},
 		/*
 		 * eventTarget
@@ -1910,17 +1911,17 @@
 				checkVideoRotate();
 				changeProgress(player.time());
 			},
-			keydown:function(e){
-				var keycode = e.keyCode || e.which;
+			keydown:function(event){
+				event=window.event || event;
+				var keycode = event.keyCode || event.which;
 				var v=player.volume();
 				switch(keycode) {
 					case 32:
-						e = window.event || event;
-					    if(e.preventDefault){
-					        e.preventDefault();
+					    if(event.preventDefault){
+					        event.preventDefault();
 					    }
 					    else{
-					        window.event.returnValue = false;
+					        event.returnValue = false;
 					    }
 						player.playOrPause();
 						break;
@@ -1938,6 +1939,31 @@
 						break;
 					default:
 						break;
+				}
+			},
+			mouseWheel:function(event){
+				event=window.event || event;
+				var v=player.volume();
+				if(event.preventDefault){
+			        event.preventDefault();
+			    }
+			    else{
+			        event.returnValue = false;
+			    }
+				if(event.wheelDelta) {
+					if(event.wheelDelta > 0) {
+						player.volume(v+.1<1?v+=.1:1);
+					}
+					if(event.wheelDelta < 0) {
+						player.volume(v-.1>0?v-=.1:0);
+					}
+				} else if(event.detail) {
+					if(event.detail > 0) {
+						player.volume(v-.1>0?v-=.1:0);
+					}
+					if(event.detail < 0) {
+						player.volume(v+.1<1?v+=.1:1);
+					}
 				}
 			}
 		};
@@ -5735,6 +5761,16 @@
 						return this;
 					};
 					/*
+					 * mouseWheel
+					 * 功能：鼠标滚轮在节点上划行时执行的函数
+					 * @fn：执行的函数
+					*/
+					res.mouseWheel =function(fn){
+						addListener(this,'mousewheel',fn);
+						addListener(this,'DOMMouseScroll',fn,false);
+						return this;
+					};
+					/*
 					 * mouseleave
 					 * 功能：鼠标指针移出节点时执行的函数
 					 * @fn：执行的函数
@@ -7214,12 +7250,16 @@
 		if(isUndefined(path)){
 			path='/';
 		}
+		var ckStr=';domain='+domain+';path='+path;
+		if(location.protocol=='https'){
+			ckStr+=';SameSite=None;Secure=true';
+		}
 		var set=function(name,value){
 			var time = 360*24*60*60*1000;
 			var exp = new Date();
 			exp.setTime(exp.getTime() + time);
 			try{
-				document.cookie = name + '='+ escape (value) + ';expires=' + exp.toGMTString()+';domain='+domain+';path='+path;
+				document.cookie = name + '='+ escape (value) + ';expires=' + exp.toGMTString()+ckStr;
 			}
 			catch(event){console.error(event)}
 		},
@@ -7237,7 +7277,7 @@
 			exp.setTime(exp.getTime() - 1);
 			var cval=get(name);
 			if(cval!=null){
-				document.cookie= name + '='+cval+';expires='+exp.toGMTString()+';domain='+domain+';path='+path;
+				document.cookie= name + '='+cval+';expires='+exp.toGMTString()+ckStr;
 			}
 		};
 		if(!isUndefined(name) && !isUndefined(value)){
