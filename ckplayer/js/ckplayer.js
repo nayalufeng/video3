@@ -2641,7 +2641,7 @@
 				if(video){
 					video.muted=false;
 					if(video.volume==0){
-						player.volume(.8);
+						player.volume(vars['volume']>0?vars['volume']:.8);
 					}
 				}
 				return player;
