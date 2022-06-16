@@ -2735,6 +2735,16 @@
 				return player;
 			},
 			/*
+			 * 提供给播放器外部使用
+			 * 功能：监听点击下一集按钮的动作
+			*/
+			next:function(fn){
+				if(!isUndefined(fn) && valType(fn)=='function'){
+					newEvent.addEventListener('next',fn);
+				}
+				return player;
+			},	
+			/*
 			 * error
 			 * 功能，监听播放器在加载视频过程和播放视频过程中出现的错误
 			 * @fn为监听执行的函数
@@ -4400,9 +4410,18 @@
 		*/
 		nextClick=function(){
 			if(valType(vars['next'])=='object'){
+				if('click' in vars['next']){
+					if(valType(vars['next']['click'])=='function'){
+						vars['next']['click']();
+					}
+					else if(valType(vars['next']['click'])=='string'){
+						eval(vars['next']['click']+'()');
+					}
+				}
 				if('link' in vars['next']){
 					window.location.href=vars['next']['link'];
 				}
+				eventTarget('next');
 			}
 		},
 		/*
