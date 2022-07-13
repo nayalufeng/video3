@@ -1461,6 +1461,7 @@
 				duration:duration,
 				volume:CT.volume
 			});
+			eventTarget('duration',duration);
 			if('error' in C){
 				C['error'].hide();
 			}
