@@ -197,6 +197,7 @@
 		var cookieTime=0;//cookie保存时间，单位：秒
 		var cookieArray=[];//保存当前所有记录
 		var focusPause=true;//失去焦点前是否是暂停状态
+		var existenceObj=false;//是否使用源码里已有的dom
 		/*
 		 * into
 		 * 功能：初始化，调用播放器则首先调用该函数
@@ -382,24 +383,39 @@
 			 */
 			calculationFps();
 			/*
+			 * 如果video指向一个已存在的video标签对象
+			 */
+			existenceObj=valType(vars['video'])=='string' && ((vars['video'].substr(0,1)=='.' && vars['video'].indexOf('/')==-1) || vars['video'].substr(0,1)=='#');
+			/*
 			 * 清空容器
 			 */
-			CT.htm('');
-			/*
-			 * 在播放容器里新建一个总的容器
-			 */
-			CK=createlDiv('ckplayer-ckplayer');
-			CT.append(CK);
-			/*
-			 * 在总容器里再新建一个容器
-			 */
-			CM=createlDiv('ck-main');
-			CK.append(CM);
-			/*
-			 * 新建一个放置video标签的容器
-			 */
-			CV=createlDiv('ck-video');
-			CM.append(CV);
+			if(existenceObj){
+				CK=CT.find('.ckplayer-ckplayer')?CT.find('.ckplayer-ckplayer').eq(0):null;
+				if(CK){
+					CM=CK.find('.ck-main')?CK.find('.ck-main').eq(0):null;
+				}
+				if(CM){
+					CV=CM.find('.ck-video')?CM.find('.ck-video').eq(0):null;
+				}
+			}
+			if(!CK || !CM || !CV){
+				CT.htm('');
+				/*
+				 * 在播放容器里新建一个总的容器
+				 */
+				CK=createlDiv('ckplayer-ckplayer');
+				CT.append(CK);
+				/*
+				 * 在总容器里再新建一个容器
+				 */
+				CM=createlDiv('ck-main');
+				CK.append(CM);
+				/*
+				 * 新建一个放置video标签的容器
+				 */
+				CV=createlDiv('ck-video');
+				CM.append(CV);
+			}
 			/*
 			 * 如果已存在video.则先设置成空
 			 */
@@ -410,8 +426,8 @@
 			/*
 			 * 如果video指向一个已存在的video标签对象，则直接调用该对象
 			 */
-			if(valType(vars['video'])=='string' && ((vars['video'].substr(0,1)=='.' && vars['video'].indexOf('/')==-1) || vars['video'].substr(0,1)=='#')){
-				video=$(vars['video']);
+			if(existenceObj){
+				video=$(vars['video'])?$(vars['video']).eq(0):null;
 			}
 			/*
 			 * 新建一个video标签
@@ -443,12 +459,14 @@
 				video.controls=false;
 			}
 			try{
-				video.attr('controlslist','nodownload');
-				video.attr('x-webkit-airplay','true');
-				video.attr('x5-video-orientation','portraint');
-				video.attr('playsinline','true');
-				video.attr('webkit-playsinline','true');
-				video.attr('x5-playsinline','true');
+				if(!existenceObj){
+					video.attr('controlslist','nodownload');
+					video.attr('x-webkit-airplay','true');
+					video.attr('x5-video-orientation','portraint');
+					video.attr('playsinline','true');
+					video.attr('webkit-playsinline','true');
+					video.attr('x5-playsinline','true');
+				}
 				if(vars['crossOrigin']){
 					video.useCORS=true;//解决跨域
 		     		video.crossOrigin=vars['crossOrigin'];//解决跨域
@@ -516,7 +534,12 @@
 			/*
 			 * 播放视频
 			 */
-			changeVideo(vars['video']);
+			if(!existenceObj){
+				changeVideo(vars['video']);
+			}
+			else{
+				changeVideo(video.attr('src'));
+			}
 			/*
 			 * 返回 播放器
 			 */
@@ -531,7 +554,7 @@
 			if(video.attr('src') || video.htm()){
 				player.pause();
 			}
-			if(video.attr('src')){
+			if(video.attr('src') && !existenceObj){
 				video.attr('src','');
 				video.removeAttr('src');
 			}
@@ -540,7 +563,9 @@
 					video.find('track').eq(i).remove();
 				}
 			}
-			video.htm('');
+			if(!existenceObj){
+				video.htm('');
+			}
 			if(!isUndefined(vars['ad'])){
 				ad=vars['ad'];
 			}
@@ -572,7 +597,9 @@
 						plugPlayer(vstr);
 					}
 					else{
-						video.attr('src',vstr);
+						if(!existenceObj){
+							video.attr('src',vstr);
+						}
 					}
 					loadTrack();
 				}
